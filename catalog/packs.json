@@ -1,0 +1,72 @@
+[
+  {
+    "id": "hogar",
+    "name": "Pack Hogar",
+    "description": "Lo básico para un PC doméstico: navegación, multimedia, PDF, mensajería y nube.",
+    "emoji": "🏠",
+    "featured": true,
+    "apps": ["chrome", "firefox", "vlc", "7zip", "sumatrapdf", "pdf24", "telegram", "googledrive"]
+  },
+  {
+    "id": "oficina",
+    "name": "Pack Oficina",
+    "description": "Productividad para trabajar: ofimática, correo, PDF y herramientas remotas.",
+    "emoji": "💼",
+    "featured": true,
+    "apps": ["chrome", "onlyoffice", "libreoffice", "pdf24", "thunderbird", "anydesk", "googledrive", "mega"]
+  },
+  {
+    "id": "gaming",
+    "name": "Pack Gaming",
+    "description": "Launchers de juegos y comunicación para jugar con tus amigos.",
+    "emoji": "🎮",
+    "featured": true,
+    "apps": ["steam", "epicgames", "playnite", "discord", "vlc"]
+  },
+  {
+    "id": "desarrollo",
+    "name": "Pack Desarrollo",
+    "description": "Stack moderno para desarrolladores: editores, Git, contenedores, runtime y APIs.",
+    "emoji": "💻",
+    "featured": true,
+    "apps": ["vscode", "git", "docker", "nodejs", "notepadpp", "postman"]
+  },
+  {
+    "id": "creador",
+    "name": "Pack Creador",
+    "description": "Herramientas open source para creadores de contenido.",
+    "emoji": "🎨",
+    "apps": ["obs", "audacity", "kdenlive", "shotcut", "gimp", "krita"]
+  },
+  {
+    "id": "audio",
+    "name": "Pack Audio",
+    "description": "Suite completa para producción musical y edición de audio.",
+    "emoji": "🎵",
+    "apps": ["reaper", "audacity", "ocenaudio", "lmms"]
+  },
+  {
+    "id": "ia",
+    "name": "Pack IA",
+    "description": "Ejecuta IA generativa en tu propio PC, sin nube.",
+    "emoji": "🤖",
+    "apps": ["ollama", "lmstudio", "jan", "openwebui"]
+  },
+  {
+    "id": "tecnico",
+    "name": "Pack Técnico",
+    "description": "Kit completo para informáticos: utilidades, acceso remoto y herramientas de arranque.",
+    "emoji": "🛠️",
+    "featured": true,
+    "apps": ["chrome", "firefox", "vlc", "winrar", "7zip", "sumatrapdf", "pdf24", "notepadpp", "anydesk", "rustdesk", "everything", "powertoys", "rufus", "etcher"]
+  },
+  {
+    "id": "postformateo",
+    "name": "Pack PostFormateo",
+    "description": "Tu PC listo tras el formateo: lo esencial para empezar a usarlo desde el primer minuto.",
+    "emoji": "🚀",
+    "featured": true,
+    "isPostFormat": true,
+    "apps": ["chrome", "vlc", "7zip", "sumatrapdf", "pdf24", "onlyoffice", "notepadpp", "anydesk", "rustdesk", "everything", "powertoys", "googledrive", "telegram"]
+  }
+]
