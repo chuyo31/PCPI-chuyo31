@@ -109,7 +109,9 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         markItem(set, get, current.app.id, {
           status: result.ok ? 'completed' : 'error',
           percent: result.ok ? 100 : current.percent,
-          message: result.ok ? 'Instalación completada' : result.error,
+          message: result.ok
+            ? (result.message ?? 'Instalación completada')
+            : (result.error ?? 'Error desconocido'),
           finishedAt,
         })
 

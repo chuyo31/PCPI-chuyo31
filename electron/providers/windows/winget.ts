@@ -80,6 +80,7 @@ export class WingetProvider implements PackageProvider {
         '--source',
         'winget',
       ],
+      'install',
       onProgress,
     )
   }
@@ -98,6 +99,7 @@ export class WingetProvider implements PackageProvider {
         '--source',
         'winget',
       ],
+      'upgrade',
       onProgress,
     )
   }
@@ -113,14 +115,20 @@ export class WingetProvider implements PackageProvider {
         '--accept-source-agreements',
         '--disable-interactivity',
       ],
+      'uninstall',
       onProgress,
     )
   }
 
-  private runWinget(args: string[], onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
+  private runWinget(
+    args: string[],
+    mode: 'install' | 'upgrade' | 'uninstall',
+    onProgress?: (e: ProgressEvent) => void,
+  ): Promise<OpResult> {
     return new Promise((resolve) => {
       const child = spawn('winget', args, { windowsHide: true })
 
+      let stdout = ''
       let stderr = ''
       let lastPercent = 0
 
@@ -150,7 +158,11 @@ export class WingetProvider implements PackageProvider {
         }
       }
 
-      child.stdout.on('data', (b: Buffer) => handleChunk(b.toString('utf8')))
+      child.stdout.on('data', (b: Buffer) => {
+        const text = b.toString('utf8')
+        stdout += text
+        handleChunk(text)
+      })
       child.stderr.on('data', (b: Buffer) => {
         const text = b.toString('utf8')
         stderr += text
@@ -163,13 +175,17 @@ export class WingetProvider implements PackageProvider {
       })
 
       child.on('close', (code) => {
-        if (code === 0) {
-          onProgress?.({ phase: 'completed', percent: 100, line: 'Instalación completada' })
-          resolve({ ok: true })
+        const result = interpretWingetExit(code, stdout, stderr, mode)
+        if (result.ok) {
+          onProgress?.({
+            phase: 'completed',
+            percent: 100,
+            line: result.message ?? 'Operación completada',
+          })
         } else {
-          onProgress?.({ phase: 'error', line: `Winget finalizó con código ${code}` })
-          resolve({ ok: false, error: stderr.trim() || `winget exited with code ${code}` })
+          onProgress?.({ phase: 'error', line: result.error })
         }
+        resolve(result)
       })
     })
   }
@@ -225,11 +241,24 @@ function parseWingetSegment(raw: string): ParsedWingetLine | null {
     }
   }
 
-  if (/successfully installed|instalado correctamente|instalación correcta/i.test(line)) {
+  if (
+    /successfully installed|instalado correctamente|instalación correcta/i.test(line) ||
+    /already installed|ya instalado|paquete ya instalado|existing package already installed/i.test(line)
+  ) {
     return {
       phase: 'completed',
       percent: 100,
-      statusMessage: 'Instalación completada',
+      statusMessage: /already|existente|ya instalado/i.test(line)
+        ? 'Ya estaba instalada en tu PC'
+        : 'Instalación completada',
+    }
+  }
+
+  if (/no available upgrade|no newer package|no hay versiones más recientes/i.test(line)) {
+    return {
+      phase: 'completed',
+      percent: 100,
+      statusMessage: 'Ya instalada (sin actualización disponible)',
     }
   }
 
@@ -355,4 +384,87 @@ function isWingetSeparatorLine(line: string): boolean {
   const t = line.trim()
   if (!t) return false
   return /^[-─]{5,}$/.test(t) || /^[-─\s]{8,}$/.test(t) && !/[A-Za-z0-9]/.test(t)
+}
+
+/**
+ * Winget a veces devuelve códigos distintos de 0 aunque la operación fue un éxito
+ * lógico (p. ej. app ya instalada sin actualización). El código 2316632070 que ve
+ * el usuario es -1978335189 como entero con signo.
+ */
+function interpretWingetExit(
+  code: number | null,
+  stdout: string,
+  stderr: string,
+  mode: 'install' | 'upgrade' | 'uninstall',
+): OpResult {
+  const output = `${stdout}\n${stderr}`.trim()
+
+  if (code === 0) {
+    return { ok: true, message: 'Instalación completada' }
+  }
+
+  if (/successfully installed|instalado correctamente/i.test(output)) {
+    return { ok: true, message: 'Instalación completada' }
+  }
+
+  if (mode === 'install' || mode === 'upgrade') {
+    const alreadyInstalled =
+      /already installed|ya está instalado|paquete ya instalado|existing package already installed|found an existing package/i.test(
+        output,
+      )
+    const noUpgrade =
+      /no available upgrade|no newer package|no hay versiones más recientes/i.test(output)
+
+    if (alreadyInstalled && (noUpgrade || mode === 'install')) {
+      return {
+        ok: true,
+        message: noUpgrade
+          ? 'Ya estaba instalada (no hay actualización disponible)'
+          : 'Ya estaba instalada en tu PC',
+      }
+    }
+  }
+
+  const signed = toSignedExitCode(code)
+  const friendly = mapWingetExitCode(signed, output)
+  return { ok: false, error: friendly }
+}
+
+function toSignedExitCode(code: number | null): number {
+  if (code === null) return -1
+  if (code > 0x7fffffff) return code - 0x100000000
+  return code
+}
+
+function mapWingetExitCode(code: number, output: string): string {
+  const known: Record<number, string> = {
+    [-1978335189]: 'La aplicación ya está instalada y no hay actualización disponible.',
+    [-1978335211]: 'La aplicación ya está instalada.',
+    [-1978335212]: 'Instalación cancelada por el usuario.',
+    [-1978335230]: 'Comando de Winget no válido.',
+    [-1978335226]: 'No se encontró el paquete en Winget.',
+  }
+  if (known[code]) return known[code]
+
+  if (/already installed|ya instalado/i.test(output)) {
+    return 'La aplicación ya está instalada en tu PC.'
+  }
+  if (/network|internet|conexión|connection/i.test(output)) {
+    return 'Error de red al descargar. Comprueba tu conexión a Internet.'
+  }
+  if (/architecture|arquitectura|64-bit|32-bit/i.test(output)) {
+    return 'Incompatible con la arquitectura de tu sistema (32/64 bits).'
+  }
+  if (/administrator|administrador|elevation|elevación/i.test(output)) {
+    return 'Se requieren permisos de administrador para instalar esta aplicación.'
+  }
+
+  const lines = output
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.length > 3 && !/^[-\\|/\s]+$/.test(l))
+  const last = lines.slice(-2).join(' ')
+  if (last) return last.length > 220 ? `${last.slice(0, 217)}…` : last
+
+  return `Winget no pudo completar la operación (código ${code}).`
 }

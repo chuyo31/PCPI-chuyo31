@@ -34,6 +34,8 @@ export interface UpgradablePackage {
 export interface OpResult {
   ok: boolean
   error?: string
+  /** Mensaje amigable cuando ok (p. ej. "Ya estaba instalada"). */
+  message?: string
 }
 
 export interface PackageProvider {
