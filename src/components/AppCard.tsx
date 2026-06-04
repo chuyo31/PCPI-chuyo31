@@ -10,6 +10,7 @@ import { TAG_META } from '@/utils/tags'
 import { categoryName } from '@/catalog/categories'
 import { formatSizeMb } from '@/utils/format'
 import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
+import { queueStatusLabel } from '@/utils/installStatus'
 import { cn } from '@/utils/cn'
 
 interface AppCardProps {
@@ -116,8 +117,11 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
           </div>
 
           {queueItem && queueItem.status !== 'completed' && queueItem.status !== 'error' ? (
-            <Button size="sm" variant="secondary" disabled>
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> {queueItem.percent}%
+            <Button size="sm" variant="secondary" disabled className="max-w-[11rem]">
+              <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+              <span className="truncate text-left">
+                {queueStatusLabel(queueItem.status, queueItem.percent, queueItem.message)}
+              </span>
             </Button>
           ) : installed && upgradable ? (
             <Button size="sm" variant="success" onClick={onInstall}>

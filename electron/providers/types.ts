@@ -6,6 +6,7 @@
 export type Phase =
   | 'pending'
   | 'downloading'
+  | 'verifying'
   | 'installing'
   | 'uninstalling'
   | 'upgrading'

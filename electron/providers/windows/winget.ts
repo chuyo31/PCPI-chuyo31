@@ -10,14 +10,9 @@ import type {
 /**
  * Provider de Winget para Windows.
  *
- * Notas:
- * - Forzamos `--accept-source-agreements --accept-package-agreements`
- *   y `--disable-interactivity` para que las instalaciones puedan correr
- *   en cola sin bloquearse en prompts.
- * - `--source winget` filtra solo el repositorio oficial.
- * - La salida de Winget tiene formato tabular con ancho variable y barra
- *   de progreso ASCII; aquí extraemos un porcentaje aproximado y lo
- *   reenviamos al renderer.
+ * Progreso: Winget escribe muchas actualizaciones en la MISMA línea con `\r`
+ * (barra ASCII). Si solo partimos por `\n`, el % llega de golpe al final.
+ * Aquí fragmentamos por `\r` y `\n` y traducimos mensajes a texto claro.
  */
 export class WingetProvider implements PackageProvider {
   readonly id = 'winget'
@@ -41,11 +36,13 @@ export class WingetProvider implements PackageProvider {
         '--accept-source-agreements',
         '--disable-interactivity',
       ])
-      return parseTable(out.stdout).map((row) => ({
-        id: row.Id ?? '',
-        name: row.Name,
-        version: row.Version ?? '',
-      })).filter((p) => p.id.length > 0)
+      return parseTable(out.stdout)
+        .map((row) => ({
+          id: row.Id ?? '',
+          name: row.Name,
+          version: row.Version ?? '',
+        }))
+        .filter((p) => p.id.length > 0)
     } catch {
       return []
     }
@@ -60,11 +57,13 @@ export class WingetProvider implements PackageProvider {
         '--accept-source-agreements',
         '--disable-interactivity',
       ])
-      return parseTable(out.stdout).map((row) => ({
-        id: row.Id ?? '',
-        current: row.Version ?? '',
-        available: row.Available ?? '',
-      })).filter((p) => p.id.length > 0 && p.available.length > 0)
+      return parseTable(out.stdout)
+        .map((row) => ({
+          id: row.Id ?? '',
+          current: row.Version ?? '',
+          available: row.Available ?? '',
+        }))
+        .filter((p) => p.id.length > 0 && p.available.length > 0)
     } catch {
       return []
     }
@@ -72,63 +71,93 @@ export class WingetProvider implements PackageProvider {
 
   install(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
-      ['install', '--id', id, '--exact', '--silent',
-       '--accept-package-agreements', '--accept-source-agreements',
-       '--disable-interactivity', '--source', 'winget'],
-      'installing',
+      [
+        'install',
+        '--id',
+        id,
+        '--exact',
+        '--silent',
+        '--accept-package-agreements',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+        '--source',
+        'winget',
+      ],
       onProgress,
     )
   }
 
   upgrade(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
-      ['upgrade', '--id', id, '--exact', '--silent',
-       '--accept-package-agreements', '--accept-source-agreements',
-       '--disable-interactivity', '--source', 'winget'],
-      'upgrading',
+      [
+        'upgrade',
+        '--id',
+        id,
+        '--exact',
+        '--silent',
+        '--accept-package-agreements',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+        '--source',
+        'winget',
+      ],
       onProgress,
     )
   }
 
   uninstall(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
-      ['uninstall', '--id', id, '--exact', '--silent',
-       '--accept-source-agreements', '--disable-interactivity'],
-      'uninstalling',
+      [
+        'uninstall',
+        '--id',
+        id,
+        '--exact',
+        '--silent',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+      ],
       onProgress,
     )
   }
 
-  private runWinget(
-    args: string[],
-    initialPhase: ProgressEvent['phase'],
-    onProgress?: (e: ProgressEvent) => void,
-  ): Promise<OpResult> {
+  private runWinget(args: string[], onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return new Promise((resolve) => {
       const child = spawn('winget', args, { windowsHide: true })
 
-      onProgress?.({ phase: initialPhase, percent: 0 })
-
       let stderr = ''
+      let lastPercent = 0
 
-      const handleLine = (raw: string) => {
-        const line = raw.replace(/\r/g, '').trim()
-        if (!line) return
-        const percentMatch = line.match(/(\d{1,3})\s?%/)
-        const percent = percentMatch ? Math.min(100, parseInt(percentMatch[1], 10)) : undefined
-        let phase: ProgressEvent['phase'] = initialPhase
-        if (/download/i.test(line)) phase = 'downloading'
-        else if (/install/i.test(line)) phase = 'installing'
-        onProgress?.({ phase, percent, line })
+      const emit = (parsed: ParsedWingetLine) => {
+        if (parsed.percent !== undefined) {
+          lastPercent = Math.max(lastPercent, parsed.percent)
+        }
+        onProgress?.({
+          phase: parsed.phase,
+          percent: parsed.percent !== undefined ? lastPercent : undefined,
+          line: parsed.statusMessage,
+        })
       }
 
-      child.stdout.on('data', (b: Buffer) => {
-        b.toString('utf8').split('\n').forEach(handleLine)
+      onProgress?.({
+        phase: 'downloading',
+        percent: 0,
+        line: 'Conectando con Winget…',
       })
+
+      const handleChunk = (chunk: string) => {
+        const normalized = chunk.replace(/\r\n/g, '\n')
+        const segments = normalized.split(/\r|\n/)
+        for (const seg of segments) {
+          const parsed = parseWingetSegment(seg)
+          if (parsed) emit(parsed)
+        }
+      }
+
+      child.stdout.on('data', (b: Buffer) => handleChunk(b.toString('utf8')))
       child.stderr.on('data', (b: Buffer) => {
         const text = b.toString('utf8')
         stderr += text
-        text.split('\n').forEach(handleLine)
+        handleChunk(text)
       })
 
       child.on('error', (err) => {
@@ -138,15 +167,99 @@ export class WingetProvider implements PackageProvider {
 
       child.on('close', (code) => {
         if (code === 0) {
-          onProgress?.({ phase: 'completed', percent: 100 })
+          onProgress?.({ phase: 'completed', percent: 100, line: 'Instalación completada' })
           resolve({ ok: true })
         } else {
-          onProgress?.({ phase: 'error', line: `winget exited with code ${code}` })
+          onProgress?.({ phase: 'error', line: `Winget finalizó con código ${code}` })
           resolve({ ok: false, error: stderr.trim() || `winget exited with code ${code}` })
         }
       })
     })
   }
+}
+
+/* ---------- Parser de salida en vivo ---------- */
+
+interface ParsedWingetLine {
+  phase: ProgressEvent['phase']
+  percent?: number
+  statusMessage: string
+}
+
+function parseWingetSegment(raw: string): ParsedWingetLine | null {
+  const line = raw.replace(/\x1b\[[0-9;]*m/g, '').trim()
+  if (!line || line.length < 2) return null
+  // Líneas que son solo la barra ASCII sin texto útil
+  if (/^[▒█■□\s\-·.]+$/.test(line)) return null
+
+  const percentMatch = line.match(/(\d{1,3})\s*%/)
+  const percent = percentMatch ? Math.min(100, parseInt(percentMatch[1], 10)) : undefined
+
+  if (/^(found|encontrad)/i.test(line)) {
+    return {
+      phase: 'downloading',
+      statusMessage: 'Paquete encontrado en el catálogo de Winget',
+    }
+  }
+
+  if (/downloading|descargando/i.test(line)) {
+    return {
+      phase: 'downloading',
+      percent,
+      statusMessage: percent
+        ? `Descargando instalador… ${percent}%`
+        : 'Descargando instalador desde el repositorio…',
+    }
+  }
+
+  if (/verif|hash|comprobando/i.test(line)) {
+    return {
+      phase: 'verifying',
+      percent: percent ?? 90,
+      statusMessage: 'Verificando integridad del instalador…',
+    }
+  }
+
+  if (/starting package install|instalando el paquete|iniciando la instalaci/i.test(line)) {
+    return {
+      phase: 'installing',
+      percent: percent ?? 5,
+      statusMessage: 'Ejecutando el instalador en tu PC…',
+    }
+  }
+
+  if (/successfully installed|instalado correctamente|instalación correcta/i.test(line)) {
+    return {
+      phase: 'completed',
+      percent: 100,
+      statusMessage: 'Instalación completada',
+    }
+  }
+
+  if (/installing|instalaci/i.test(line)) {
+    return {
+      phase: 'installing',
+      percent,
+      statusMessage: percent ? `Instalando… ${percent}%` : 'Instalando en el sistema…',
+    }
+  }
+
+  if (/cancelled|cancelad|failed|error|fallo/i.test(line)) {
+    return { phase: 'error', statusMessage: line.slice(0, 120) }
+  }
+
+  if (percent !== undefined) {
+    const downloading = /download|descarg/i.test(line)
+    return {
+      phase: downloading ? 'downloading' : 'installing',
+      percent,
+      statusMessage: downloading
+        ? `Descargando… ${percent}%`
+        : `Instalando… ${percent}%`,
+    }
+  }
+
+  return null
 }
 
 /* ----------------------- helpers ----------------------- */
@@ -166,11 +279,6 @@ function runOnce(cmd: string, args: string[]): Promise<{ stdout: string; stderr:
   })
 }
 
-/**
- * Parser tolerante de la salida tabular de Winget.
- * Detecta la línea de cabecera (la que precede a una línea de guiones)
- * y calcula los offsets de cada columna a partir de ella.
- */
 function parseTable(stdout: string): Array<Record<string, string>> {
   const lines = stdout.replace(/\r/g, '').split('\n')
   let headerIdx = -1

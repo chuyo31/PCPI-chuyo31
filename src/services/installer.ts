@@ -2,7 +2,14 @@ import { create } from 'zustand'
 import type { AppEntry } from '@/catalog/types'
 import { findApp } from './catalog'
 
-export type QueueStatus = 'pending' | 'downloading' | 'installing' | 'completed' | 'error'
+export type QueueStatus =
+  | 'pending'
+  | 'starting'
+  | 'downloading'
+  | 'verifying'
+  | 'installing'
+  | 'completed'
+  | 'error'
 
 export interface QueueItem {
   app: AppEntry
@@ -62,15 +69,13 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     const unsubscribe = window.pcpi.packages.onProgress((p) => {
       const queue = get().queue.map((item) => {
         if (item.app.wingetId !== p.id) return item
-        const status: QueueStatus =
-          p.phase === 'completed' ? 'completed'
-          : p.phase === 'error' ? 'error'
-          : p.phase === 'downloading' ? 'downloading'
-          : 'installing'
+        const status = phaseToQueueStatus(p.phase)
+        const percent =
+          p.percent !== undefined ? Math.max(item.percent, p.percent) : item.percent
         return {
           ...item,
           status,
-          percent: p.percent ?? item.percent,
+          percent,
           message: p.line ?? item.message,
         }
       })
@@ -85,7 +90,12 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         if (!current) break
 
         const startedAt = Date.now()
-        markItem(set, get, current.app.id, { status: 'installing', percent: 0, startedAt })
+        markItem(set, get, current.app.id, {
+          status: 'starting',
+          percent: 0,
+          message: 'Iniciando Winget…',
+          startedAt,
+        })
 
         const result = await window.pcpi.packages.install(current.app.wingetId)
 
@@ -145,4 +155,23 @@ export function isAppInstalled(installedIds: Set<string>, app: AppEntry): boolea
 
 export function isAppUpgradable(upgradableIds: Set<string>, app: AppEntry): boolean {
   return upgradableIds.has(app.wingetId.toLowerCase())
+}
+
+function phaseToQueueStatus(phase: string): QueueStatus {
+  switch (phase) {
+    case 'completed':
+      return 'completed'
+    case 'error':
+      return 'error'
+    case 'downloading':
+      return 'downloading'
+    case 'verifying':
+      return 'verifying'
+    case 'installing':
+    case 'upgrading':
+    case 'uninstalling':
+      return 'installing'
+    default:
+      return 'downloading'
+  }
 }
