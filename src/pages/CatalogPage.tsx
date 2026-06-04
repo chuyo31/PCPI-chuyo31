@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button'
 import { AppCard } from '@/components/AppCard'
 import { useCatalog } from '@/services/catalog'
 import { CATEGORIES, categoryName } from '@/catalog/categories'
-import { useInstaller } from '@/services/installer'
+import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
 import { cn } from '@/utils/cn'
 
 type View = 'grid' | 'list'
+type StatusFilter = 'all' | 'installed' | 'upgradable' | 'not_installed'
 
 export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
   const [params, setParams] = useSearchParams()
@@ -18,13 +19,40 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
   const enqueue = useInstaller((s) => s.enqueue)
   const runQueue = useInstaller((s) => s.runQueue)
   const catalog = useCatalog((s) => s.catalog)
+  const installedById = useInstaller((s) => s.installedById)
+  const upgradableById = useInstaller((s) => s.upgradableById)
+  const systemScanReady = useInstaller((s) => s.systemScanReady)
 
   const q = (params.get('q') ?? '').trim().toLowerCase()
   const category = fixedCategory ?? params.get('category') ?? ''
+  const statusFilter = (params.get('status') as StatusFilter) || 'all'
+
+  const counts = useMemo(() => {
+    let installed = 0
+    let upgradable = 0
+    let notInstalled = 0
+    for (const a of catalog) {
+      const inst = systemScanReady && isAppInstalled(installedById, a)
+      const upg = systemScanReady && isAppUpgradable(upgradableById, a)
+      if (inst) installed++
+      if (upg) upgradable++
+      if (systemScanReady && !inst) notInstalled++
+    }
+    return { installed, upgradable, notInstalled }
+  }, [catalog, installedById, upgradableById, systemScanReady])
 
   const apps = useMemo(() => {
     return catalog.filter((a) => {
       if (category && a.category !== category) return false
+
+      if (systemScanReady && statusFilter !== 'all') {
+        const inst = isAppInstalled(installedById, a)
+        const upg = isAppUpgradable(upgradableById, a)
+        if (statusFilter === 'installed' && !inst) return false
+        if (statusFilter === 'upgradable' && !upg) return false
+        if (statusFilter === 'not_installed' && inst) return false
+      }
+
       if (!q) return true
       return (
         a.name.toLowerCase().includes(q) ||
@@ -33,7 +61,14 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
         a.tags.some((t) => t.toLowerCase().includes(q))
       )
     })
-  }, [q, category, catalog])
+  }, [q, category, catalog, statusFilter, installedById, upgradableById, systemScanReady])
+
+  const setStatusFilter = (status: StatusFilter) => {
+    const next = new URLSearchParams(params)
+    if (status === 'all') next.delete('status')
+    else next.set('status', status)
+    setParams(next, { replace: true })
+  }
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -65,6 +100,32 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
           {selected.size > 0 && ` · ${selected.size} seleccionadas`}
         </p>
       </header>
+
+      {systemScanReady && (
+        <div className="flex flex-wrap gap-2">
+          <FilterChip
+            active={statusFilter === 'all'}
+            onClick={() => setStatusFilter('all')}
+            label="Todas"
+          />
+          <FilterChip
+            active={statusFilter === 'installed'}
+            onClick={() => setStatusFilter('installed')}
+            label={`Instaladas (${counts.installed})`}
+          />
+          <FilterChip
+            active={statusFilter === 'upgradable'}
+            onClick={() => setStatusFilter('upgradable')}
+            label={`Actualizables (${counts.upgradable})`}
+            accent="warning"
+          />
+          <FilterChip
+            active={statusFilter === 'not_installed'}
+            onClick={() => setStatusFilter('not_installed')}
+            label={`No instaladas (${counts.notInstalled})`}
+          />
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2">
@@ -182,5 +243,34 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
         </div>
       )}
     </div>
+  )
+}
+
+function FilterChip({
+  label,
+  active,
+  onClick,
+  accent,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+  accent?: 'warning'
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'rounded-full border px-3 py-1 text-xs font-medium transition',
+        active
+          ? accent === 'warning'
+            ? 'border-pcpi-warning bg-pcpi-warning/15 text-pcpi-warning'
+            : 'border-pcpi-accent bg-pcpi-accent/15 text-pcpi-accent'
+          : 'border-white/10 text-pcpi-text-muted hover:border-white/20',
+      )}
+    >
+      {label}
+    </button>
   )
 }

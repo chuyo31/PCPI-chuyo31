@@ -9,7 +9,13 @@ import type { AppEntry } from '@/catalog/types'
 import { TAG_META } from '@/utils/tags'
 import { categoryName } from '@/catalog/categories'
 import { formatSizeMb } from '@/utils/format'
-import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
+import {
+  useInstaller,
+  isAppInstalled,
+  isAppUpgradable,
+  getInstalledVersion,
+  getUpgradeInfo,
+} from '@/services/installer'
 import { queueStatusLabel } from '@/utils/installStatus'
 import { cn } from '@/utils/cn'
 
@@ -21,14 +27,29 @@ interface AppCardProps {
 
 export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
   const navigate = useNavigate()
-  const installedIds = useInstaller((s) => s.installedIds)
-  const upgradableIds = useInstaller((s) => s.upgradableIds)
+  const installedById = useInstaller((s) => s.installedById)
+  const upgradableById = useInstaller((s) => s.upgradableById)
+  const systemScanReady = useInstaller((s) => s.systemScanReady)
   const enqueue = useInstaller((s) => s.enqueue)
   const runQueue = useInstaller((s) => s.runQueue)
   const queueItem = useInstaller((s) => s.queue.find((q) => q.app.id === app.id))
 
-  const installed = useMemo(() => isAppInstalled(installedIds, app), [installedIds, app])
-  const upgradable = useMemo(() => isAppUpgradable(upgradableIds, app), [upgradableIds, app])
+  const installed = useMemo(
+    () => systemScanReady && isAppInstalled(installedById, app),
+    [installedById, app, systemScanReady],
+  )
+  const upgradable = useMemo(
+    () => systemScanReady && isAppUpgradable(upgradableById, app),
+    [upgradableById, app, systemScanReady],
+  )
+  const installedVersion = useMemo(
+    () => getInstalledVersion(installedById, app),
+    [installedById, app],
+  )
+  const upgradeInfo = useMemo(
+    () => getUpgradeInfo(upgradableById, app),
+    [upgradableById, app],
+  )
 
   const onInstall = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -45,8 +66,24 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
         'group relative flex flex-col cursor-pointer overflow-hidden',
         'hover:scale-[1.03] hover:shadow-xl hover:shadow-pcpi-accent/10 hover:border-pcpi-accent/30',
         selected && 'ring-2 ring-pcpi-accent border-pcpi-accent/50',
+        installed && !upgradable && 'border-pcpi-success/25',
+        upgradable && 'border-pcpi-warning/40',
       )}
     >
+      {(installed || upgradable) && (
+        <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1">
+          {installed && (
+            <Badge variant="success" className="text-[10px] shadow-sm">
+              Instalada
+            </Badge>
+          )}
+          {upgradable && (
+            <Badge variant="warning" className="text-[10px] shadow-sm">
+              Actualización
+            </Badge>
+          )}
+        </div>
+      )}
       {onToggleSelect && (
         <div
           className="absolute top-3 right-3 z-10"
@@ -113,7 +150,14 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
 
         <div className="flex items-center justify-between gap-2 pt-1">
           <div className="text-[11px] text-pcpi-text-muted-light dark:text-pcpi-text-muted">
-            {app.version ?? '—'} · {formatSizeMb(app.sizeMb)}
+            {installedVersion
+              ? `v${installedVersion}`
+              : app.version ?? '—'}
+            {upgradeInfo && (
+              <span className="text-pcpi-warning"> → v{upgradeInfo.available}</span>
+            )}
+            {' · '}
+            {formatSizeMb(app.sizeMb)}
           </div>
 
           {queueItem && queueItem.status !== 'completed' && queueItem.status !== 'error' ? (
@@ -133,10 +177,10 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
               variant="outline"
               onClick={(e) => {
                 e.stopPropagation()
-                if (app.website) window.pcpi?.app.openExternal(app.website)
+                if (app.website) void window.pcpi?.app.openExternal(app.website)
               }}
             >
-              <ExternalLink className="h-3.5 w-3.5" /> Abrir
+              <CheckCircle2 className="h-3.5 w-3.5 text-pcpi-success" /> Instalada
             </Button>
           ) : (
             <Button size="sm" onClick={onInstall}>

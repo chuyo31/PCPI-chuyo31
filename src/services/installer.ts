@@ -20,6 +20,11 @@ export interface QueueItem {
   finishedAt?: number
 }
 
+export interface UpgradeInfo {
+  current: string
+  available: string
+}
+
 interface InstallerState {
   queue: QueueItem[]
   running: boolean
@@ -28,17 +33,21 @@ interface InstallerState {
   clearCompleted: () => void
   runQueue: () => Promise<void>
 
-  /** Reactividad: estos sets cambian tras detectar y permiten re-render fino. */
-  installedIds: Set<string>
-  upgradableIds: Set<string>
+  /** wingetId (minúsculas) → versión instalada */
+  installedById: Record<string, string>
+  /** wingetId (minúsculas) → info de actualización */
+  upgradableById: Record<string, UpgradeInfo>
+  systemScanReady: boolean
+
   refreshSystemState: () => Promise<void>
 }
 
 export const useInstaller = create<InstallerState>((set, get) => ({
   queue: [],
   running: false,
-  installedIds: new Set(),
-  upgradableIds: new Set(),
+  installedById: {},
+  upgradableById: {},
+  systemScanReady: false,
 
   enqueue: (appIds) => {
     const queue = [...get().queue]
@@ -65,7 +74,6 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     if (get().running) return
     set({ running: true })
 
-    // Suscripción a eventos de progreso del main.
     const unsubscribe = window.pcpi.packages.onProgress((p) => {
       const queue = get().queue.map((item) => {
         if (item.app.wingetId !== p.id) return item
@@ -83,8 +91,6 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     })
 
     try {
-      // Ejecutamos en serie para no saturar Winget ni la red.
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const current = get().queue.find((q) => q.status === 'pending')
         if (!current) break
@@ -123,16 +129,34 @@ export const useInstaller = create<InstallerState>((set, get) => ({
   },
 
   refreshSystemState: async () => {
+    if (!window.pcpi) {
+      set({ systemScanReady: true })
+      return
+    }
     try {
       const [installed, upgradable] = await Promise.all([
         window.pcpi.packages.listInstalled(),
         window.pcpi.packages.listUpgradable(),
       ])
-      const installedIds = new Set(installed.map((p) => p.id.toLowerCase()))
-      const upgradableIds = new Set(upgradable.map((p) => p.id.toLowerCase()))
-      set({ installedIds, upgradableIds })
+
+      const installedById: Record<string, string> = {}
+      for (const p of installed) {
+        if (p.id) installedById[p.id.toLowerCase()] = p.version
+      }
+
+      const upgradableById: Record<string, UpgradeInfo> = {}
+      for (const p of upgradable) {
+        if (p.id && p.available) {
+          upgradableById[p.id.toLowerCase()] = {
+            current: p.current,
+            available: p.available,
+          }
+        }
+      }
+
+      set({ installedById, upgradableById, systemScanReady: true })
     } catch {
-      // Ignorar: Winget puede no estar disponible (Linux/macOS).
+      set({ systemScanReady: true })
     }
   },
 }))
@@ -148,13 +172,32 @@ function markItem(
   })
 }
 
-/** Helper: ¿hay una app instalada según el último refresh? */
-export function isAppInstalled(installedIds: Set<string>, app: AppEntry): boolean {
-  return installedIds.has(app.wingetId.toLowerCase())
+export function isAppInstalled(
+  installedById: Record<string, string>,
+  app: AppEntry,
+): boolean {
+  return app.wingetId.toLowerCase() in installedById
 }
 
-export function isAppUpgradable(upgradableIds: Set<string>, app: AppEntry): boolean {
-  return upgradableIds.has(app.wingetId.toLowerCase())
+export function getInstalledVersion(
+  installedById: Record<string, string>,
+  app: AppEntry,
+): string | undefined {
+  return installedById[app.wingetId.toLowerCase()]
+}
+
+export function isAppUpgradable(
+  upgradableById: Record<string, UpgradeInfo>,
+  app: AppEntry,
+): boolean {
+  return app.wingetId.toLowerCase() in upgradableById
+}
+
+export function getUpgradeInfo(
+  upgradableById: Record<string, UpgradeInfo>,
+  app: AppEntry,
+): UpgradeInfo | undefined {
+  return upgradableById[app.wingetId.toLowerCase()]
 }
 
 function phaseToQueueStatus(phase: string): QueueStatus {

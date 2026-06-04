@@ -1,4 +1,4 @@
-import { Search, Moon, Sun, RefreshCw, Loader2, CheckCircle2 } from 'lucide-react'
+import { Search, Moon, Sun, RefreshCw, Loader2, CheckCircle2, Scan } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useTheme } from '@/hooks/useTheme'
 import { useInstaller } from '@/services/installer'
 import { useCatalog } from '@/services/catalog'
+import { isAppInstalled, isAppUpgradable } from '@/services/installer'
 import { useToasts } from '@/components/Toast'
 import { formatDate } from '@/utils/format'
 import { cn } from '@/utils/cn'
@@ -15,17 +16,34 @@ export function Header() {
   const { theme, toggle } = useTheme()
   const navigate = useNavigate()
   const refreshSystem = useInstaller((s) => s.refreshSystemState)
+  const catalog = useCatalog((s) => s.catalog)
   const updateCatalog = useCatalog((s) => s.update)
   const catalogLoading = useCatalog((s) => s.loading)
   const catalogSource = useCatalog((s) => s.source)
   const catalogLastUpdate = useCatalog((s) => s.lastUpdate)
   const pushToast = useToasts((s) => s.push)
   const [query, setQuery] = useState('')
+  const [scanning, setScanning] = useState(false)
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const q = query.trim()
     navigate(q ? `/catalog?q=${encodeURIComponent(q)}` : '/catalog')
+  }
+
+  const onScanSystem = async () => {
+    setScanning(true)
+    try {
+      await refreshSystem()
+      const { installedById, upgradableById } = useInstaller.getState()
+      const inst = catalog.filter((a) => isAppInstalled(installedById, a)).length
+      const upg = catalog.filter((a) => isAppUpgradable(upgradableById, a)).length
+      pushToast(`${inst} instaladas del catálogo · ${upg} con actualización`, 'success')
+    } catch {
+      pushToast('No se pudo escanear el sistema con Winget', 'error')
+    } finally {
+      setScanning(false)
+    }
   }
 
   const onUpdateCatalog = async () => {
@@ -58,6 +76,22 @@ export function Header() {
       </form>
 
       <div className="flex items-center gap-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="sm" onClick={onScanSystem} disabled={scanning}>
+              {scanning ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Scan className="h-4 w-4" />
+              )}
+              <span className="hidden lg:inline">Escanear PC</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            Detectar qué apps del catálogo ya están instaladas y cuáles tienen actualización (Winget).
+          </TooltipContent>
+        </Tooltip>
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

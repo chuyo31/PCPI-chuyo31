@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 import { Package, Sparkles, Heart, ShieldCheck, RotateCw } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useInstaller } from '@/services/installer'
+import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
 import { useCatalog } from '@/services/catalog'
 import { formatDate } from '@/utils/format'
 
 export function HomePage() {
-  const installed = useInstaller((s) => s.installedIds)
-  const upgradable = useInstaller((s) => s.upgradableIds)
+  const installedById = useInstaller((s) => s.installedById)
+  const upgradableById = useInstaller((s) => s.upgradableById)
   const refresh = useInstaller((s) => s.refreshSystemState)
   const catalog = useCatalog((s) => s.catalog)
   const packs = useCatalog((s) => s.packs)
@@ -28,6 +28,8 @@ export function HomePage() {
   const total = catalog.length
   const openSource = catalog.filter((a) => a.tags.includes('opensource')).length
   const free = catalog.filter((a) => a.tags.includes('free') || a.tags.includes('opensource')).length
+  const installedCount = catalog.filter((a) => isAppInstalled(installedById, a)).length
+  const upgradableCount = catalog.filter((a) => isAppUpgradable(upgradableById, a)).length
   const catalogStamp = source === 'remote' && lastUpdate ? formatDate(lastUpdate) : 'Bundle'
 
   return (
@@ -58,8 +60,8 @@ export function HomePage() {
         <Stat icon={<Package className="h-4 w-4" />} label="Apps disponibles" value={total} />
         <Stat icon={<Heart className="h-4 w-4" />} label="Open Source" value={openSource} />
         <Stat icon={<ShieldCheck className="h-4 w-4" />} label="Gratuitas" value={free} />
-        <Stat icon={<Package className="h-4 w-4" />} label="Instaladas" value={installed.size} />
-        <Stat icon={<RotateCw className="h-4 w-4" />} label="Actualizables" value={upgradable.size} />
+        <Stat icon={<Package className="h-4 w-4" />} label="Instaladas (catálogo)" value={installedCount} />
+        <Stat icon={<RotateCw className="h-4 w-4" />} label="Con actualización" value={upgradableCount} />
         <Stat icon={<Sparkles className="h-4 w-4" />} label="Última sync" value={lastSync} small />
       </section>
 

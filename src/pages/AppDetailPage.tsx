@@ -7,7 +7,13 @@ import { TAG_META } from '@/utils/tags'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
+import {
+  useInstaller,
+  isAppInstalled,
+  isAppUpgradable,
+  getInstalledVersion,
+  getUpgradeInfo,
+} from '@/services/installer'
 import { formatSizeMb } from '@/utils/format'
 import { cn } from '@/utils/cn'
 
@@ -16,13 +22,22 @@ export function AppDetailPage() {
   const catalog = useCatalog((s) => s.catalog)
   const app = id ? findApp(id, catalog) : undefined
 
-  const installedIds = useInstaller((s) => s.installedIds)
-  const upgradableIds = useInstaller((s) => s.upgradableIds)
+  const installedById = useInstaller((s) => s.installedById)
+  const upgradableById = useInstaller((s) => s.upgradableById)
+  const systemScanReady = useInstaller((s) => s.systemScanReady)
   const enqueue = useInstaller((s) => s.enqueue)
   const runQueue = useInstaller((s) => s.runQueue)
 
-  const installed = useMemo(() => (app ? isAppInstalled(installedIds, app) : false), [installedIds, app])
-  const upgradable = useMemo(() => (app ? isAppUpgradable(upgradableIds, app) : false), [upgradableIds, app])
+  const installed = useMemo(
+    () => (app && systemScanReady ? isAppInstalled(installedById, app) : false),
+    [installedById, app, systemScanReady],
+  )
+  const upgradable = useMemo(
+    () => (app && systemScanReady ? isAppUpgradable(upgradableById, app) : false),
+    [upgradableById, app, systemScanReady],
+  )
+  const installedVersion = app ? getInstalledVersion(installedById, app) : undefined
+  const upgradeInfo = app ? getUpgradeInfo(upgradableById, app) : undefined
 
   if (!app) {
     return (
@@ -76,6 +91,17 @@ export function AppDetailPage() {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5">
+            {installed && (
+              <Badge variant="success">Instalada{installedVersion ? ` · v${installedVersion}` : ''}</Badge>
+            )}
+            {upgradable && upgradeInfo && (
+              <Badge variant="warning">
+                Actualización · v{upgradeInfo.current} → v{upgradeInfo.available}
+              </Badge>
+            )}
+            {!installed && systemScanReady && (
+              <Badge variant="outline">No instalada</Badge>
+            )}
             {app.tags.map((t) => {
               const meta = TAG_META[t]
               return (
@@ -93,8 +119,8 @@ export function AppDetailPage() {
                 <RefreshCw className="h-4 w-4" /> Actualizar
               </Button>
             ) : installed ? (
-              <Button variant="outline" onClick={() => app.website && window.pcpi?.app.openExternal(app.website)}>
-                <ExternalLink className="h-4 w-4" /> Abrir web
+              <Button variant="outline" disabled>
+                Instalada en tu PC
               </Button>
             ) : (
               <Button onClick={install}>

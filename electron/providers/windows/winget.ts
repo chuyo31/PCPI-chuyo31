@@ -29,18 +29,17 @@ export class WingetProvider implements PackageProvider {
 
   async listInstalled(): Promise<InstalledPackage[]> {
     try {
+      // Sin --source: incluye paquetes winget + los que Winget detecta en el sistema.
       const out = await runOnce('winget', [
         'list',
-        '--source',
-        'winget',
         '--accept-source-agreements',
         '--disable-interactivity',
       ])
-      return parseTable(out.stdout)
+      return parseWingetTable(out.combined)
         .map((row) => ({
-          id: row.Id ?? '',
-          name: row.Name,
-          version: row.Version ?? '',
+          id: row.id,
+          name: row.name,
+          version: row.version,
         }))
         .filter((p) => p.id.length > 0)
     } catch {
@@ -52,16 +51,14 @@ export class WingetProvider implements PackageProvider {
     try {
       const out = await runOnce('winget', [
         'upgrade',
-        '--source',
-        'winget',
         '--accept-source-agreements',
         '--disable-interactivity',
       ])
-      return parseTable(out.stdout)
+      return parseWingetTable(out.combined)
         .map((row) => ({
-          id: row.Id ?? '',
-          current: row.Version ?? '',
-          available: row.Available ?? '',
+          id: row.id,
+          current: row.version,
+          available: row.available ?? '',
         }))
         .filter((p) => p.id.length > 0 && p.available.length > 0)
     } catch {
@@ -264,7 +261,7 @@ function parseWingetSegment(raw: string): ParsedWingetLine | null {
 
 /* ----------------------- helpers ----------------------- */
 
-function runOnce(cmd: string, args: string[]): Promise<{ stdout: string; stderr: string }> {
+function runOnce(cmd: string, args: string[]): Promise<{ stdout: string; stderr: string; combined: string }> {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, { windowsHide: true })
     let stdout = ''
@@ -273,17 +270,43 @@ function runOnce(cmd: string, args: string[]): Promise<{ stdout: string; stderr:
     child.stderr.on('data', (b: Buffer) => (stderr += b.toString('utf8')))
     child.on('error', reject)
     child.on('close', (code) => {
-      if (code === 0) resolve({ stdout, stderr })
+      const combined = `${stdout}\n${stderr}`
+      if (code === 0) resolve({ stdout, stderr, combined })
       else reject(new Error(stderr.trim() || `${cmd} exited with code ${code}`))
     })
   })
 }
 
-function parseTable(stdout: string): Array<Record<string, string>> {
-  const lines = stdout.replace(/\r/g, '').split('\n')
+interface WingetTableRow {
+  id: string
+  name?: string
+  version: string
+  available?: string
+  source?: string
+}
+
+/**
+ * Parser de tablas Winget (list / upgrade).
+ * Winget usa una línea continua de guiones como separador, no grupos "---- ----".
+ */
+function parseWingetTable(raw: string): WingetTableRow[] {
+  const lines = raw
+    .replace(/\r/g, '')
+    .replace(/\x1b\[[0-9;]*m/g, '')
+    .split('\n')
+    .map((l) => l.replace(/\u2026/g, '...'))
+    .filter((line) => {
+      const t = line.trim()
+      if (!t) return false
+      if (t === '-' || /^[\\|\/\-\s]+$/.test(t)) return false
+      if (/^\d[\d.KMB]*\s*(KB|MB|GB|%)/i.test(t)) return false
+      return true
+    })
+
   let headerIdx = -1
   for (let i = 0; i < lines.length - 1; i++) {
-    if (/^-+(\s+-+)+\s*$/.test(lines[i + 1])) {
+    const next = lines[i + 1].trim()
+    if (isWingetSeparatorLine(next) && /\S/.test(lines[i])) {
       headerIdx = i
       break
     }
@@ -291,25 +314,45 @@ function parseTable(stdout: string): Array<Record<string, string>> {
   if (headerIdx === -1) return []
 
   const header = lines[headerIdx]
-  const cols: Array<{ name: string; start: number }> = []
+  const cols: Array<{ key: string; start: number }> = []
   const re = /\S+/g
   let m: RegExpExecArray | null
   while ((m = re.exec(header)) !== null) {
-    cols.push({ name: m[0], start: m.index })
+    cols.push({ key: m[0].toLowerCase(), start: m.index })
   }
 
-  const rows: Array<Record<string, string>> = []
+  const rows: WingetTableRow[] = []
   for (let i = headerIdx + 2; i < lines.length; i++) {
     const line = lines[i]
-    if (!line.trim()) continue
-    if (/^\s*\d+\s+(upgrades?|packages?)/i.test(line)) continue
-    const row: Record<string, string> = {}
+    const trimmed = line.trim()
+    if (!trimmed) continue
+    if (/^\d+\s+(upgrades?|packages?)\s+available/i.test(trimmed)) continue
+    if (isWingetSeparatorLine(trimmed)) continue
+
+    const cells: Record<string, string> = {}
     for (let c = 0; c < cols.length; c++) {
       const start = cols[c].start
       const end = c + 1 < cols.length ? cols[c + 1].start : line.length
-      row[cols[c].name] = line.substring(start, end).trim()
+      cells[cols[c].key] = line.substring(start, end).trim()
     }
-    rows.push(row)
+
+    const id = cells.id ?? cells['identificador'] ?? ''
+    if (!id) continue
+
+    rows.push({
+      id,
+      name: cells.name ?? cells.nombre,
+      version: cells.version ?? cells.versión ?? cells.versione ?? '',
+      available: cells.available ?? cells.disponible,
+      source: cells.source ?? cells.origen,
+    })
   }
+
   return rows
+}
+
+function isWingetSeparatorLine(line: string): boolean {
+  const t = line.trim()
+  if (!t) return false
+  return /^[-─]{5,}$/.test(t) || /^[-─\s]{8,}$/.test(t) && !/[A-Za-z0-9]/.test(t)
 }
