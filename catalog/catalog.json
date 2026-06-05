@@ -1,99 +1,1270 @@
 [
-  { "id": "chrome", "name": "Google Chrome", "developer": "Google", "description": "Navegador web rápido, seguro y con un gran ecosistema de extensiones.", "category": "browsers", "wingetId": "Google.Chrome", "license": "Freeware", "website": "https://www.google.com/chrome", "tags": ["popular", "free", "essential"] },
-  { "id": "firefox", "name": "Mozilla Firefox", "developer": "Mozilla", "description": "Navegador libre, centrado en la privacidad y altamente personalizable.", "category": "browsers", "wingetId": "Mozilla.Firefox", "license": "Other", "website": "https://www.mozilla.org/firefox", "tags": ["popular", "opensource", "free", "essential"] },
-  { "id": "brave", "name": "Brave", "developer": "Brave Software", "description": "Navegador basado en Chromium con bloqueador de anuncios y rastreadores integrado.", "category": "browsers", "wingetId": "Brave.Brave", "license": "Other", "website": "https://brave.com", "tags": ["opensource", "free", "recommended"] },
-  { "id": "opera", "name": "Opera", "developer": "Opera Software", "description": "Navegador rápido con VPN gratuita integrada y mensajería en barra lateral.", "category": "browsers", "wingetId": "Opera.Opera", "license": "Freeware", "website": "https://www.opera.com", "tags": ["free"] },
-  { "id": "vivaldi", "name": "Vivaldi", "developer": "Vivaldi Technologies", "description": "Navegador altamente personalizable orientado a usuarios avanzados.", "category": "browsers", "wingetId": "Vivaldi.Vivaldi", "license": "Freeware", "website": "https://vivaldi.com", "tags": ["free"] },
-
-  { "id": "vlc", "name": "VLC media player", "developer": "VideoLAN", "description": "Reproductor multimedia libre y gratuito que reproduce casi cualquier formato.", "category": "multimedia", "wingetId": "VideoLAN.VLC", "license": "GPL", "website": "https://www.videolan.org/vlc", "tags": ["essential", "popular", "opensource", "free"] },
-  { "id": "kodi", "name": "Kodi", "developer": "Kodi Foundation", "description": "Centro multimedia open source para gestionar y reproducir tu colección.", "category": "multimedia", "wingetId": "XBMCFoundation.Kodi", "license": "GPL", "website": "https://kodi.tv", "tags": ["opensource", "free", "multimedia"] },
-  { "id": "handbrake", "name": "HandBrake", "developer": "HandBrake Team", "description": "Transcodificador de vídeo open source para convertir entre múltiples formatos.", "category": "multimedia", "wingetId": "HandBrake.HandBrake", "license": "GPL", "website": "https://handbrake.fr", "tags": ["opensource", "free"] },
-  { "id": "mkvtoolnix", "name": "MKVToolNix", "developer": "Moritz Bunkus", "description": "Conjunto de herramientas para crear, inspeccionar y editar archivos MKV.", "category": "multimedia", "wingetId": "MoritzBunkus.MKVToolNix", "license": "GPL", "website": "https://mkvtoolnix.download", "tags": ["opensource", "free"] },
-
-  { "id": "kdenlive", "name": "Kdenlive", "developer": "KDE", "description": "Editor de vídeo no lineal libre y multiplataforma.", "category": "video", "wingetId": "KDE.Kdenlive", "license": "GPL", "website": "https://kdenlive.org", "tags": ["opensource", "free", "recommended"] },
-  { "id": "shotcut", "name": "Shotcut", "developer": "Meltytech, LLC", "description": "Editor de vídeo open source con soporte para multitud de formatos.", "category": "video", "wingetId": "Meltytech.Shotcut", "license": "GPL", "website": "https://shotcut.org", "tags": ["opensource", "free"] },
-  { "id": "olive", "name": "Olive", "developer": "Olive Team", "description": "Editor de vídeo no lineal moderno y open source (en desarrollo activo).", "category": "video", "wingetId": "OliveTeam.Olive", "license": "GPL", "website": "https://www.olivevideoeditor.org", "tags": ["opensource", "free", "new"] },
-  { "id": "losslesscut", "name": "LosslessCut", "developer": "mifi", "description": "Recorta y une vídeos sin recodificar, sin pérdida de calidad.", "category": "video", "wingetId": "mifi.lossless-cut", "license": "GPL", "website": "https://mifi.no/losslesscut", "tags": ["opensource", "free", "lightweight"] },
-
-  { "id": "gimp", "name": "GIMP", "developer": "The GIMP Team", "description": "Editor de imágenes libre y potente, alternativa a Photoshop.", "category": "photo", "wingetId": "GIMP.GIMP", "license": "GPL", "website": "https://www.gimp.org", "tags": ["essential", "opensource", "free", "popular"] },
-  { "id": "paintnet", "name": "Paint.NET", "developer": "dotPDN LLC", "description": "Editor de imágenes ligero y muy fácil de usar.", "category": "photo", "wingetId": "dotPDN.PaintDotNet", "license": "Freeware", "website": "https://www.getpaint.net", "tags": ["free", "lightweight", "popular"] },
-  { "id": "krita", "name": "Krita", "developer": "KDE", "description": "Herramienta open source para ilustración digital y pintura.", "category": "photo", "wingetId": "KDE.Krita", "license": "GPL", "website": "https://krita.org", "tags": ["opensource", "free", "recommended"] },
-  { "id": "inkscape", "name": "Inkscape", "developer": "Inkscape Project", "description": "Editor de gráficos vectoriales SVG libre y gratuito.", "category": "photo", "wingetId": "Inkscape.Inkscape", "license": "GPL", "website": "https://inkscape.org", "tags": ["opensource", "free"] },
-
-  { "id": "reaper", "name": "REAPER", "developer": "Cockos Inc.", "description": "DAW completa, ligera y muy estable. Licencia de evaluación generosa.", "category": "audio", "wingetId": "Cockos.REAPER", "license": "Proprietary", "website": "https://www.reaper.fm", "tags": ["recommended"] },
-  { "id": "audacity", "name": "Audacity", "developer": "Audacity Team", "description": "Editor de audio multipista libre, simple y potente.", "category": "audio", "wingetId": "Audacity.Audacity", "license": "GPL", "website": "https://www.audacityteam.org", "tags": ["essential", "popular", "opensource", "free"] },
-  { "id": "ocenaudio", "name": "Ocenaudio", "developer": "Ocenaudio Team", "description": "Editor de audio rápido y fácil de usar para tareas habituales.", "category": "audio", "wingetId": "ocenaudio.ocenaudio", "license": "Freeware", "website": "https://www.ocenaudio.com", "tags": ["free", "lightweight"] },
-  { "id": "lmms", "name": "LMMS", "developer": "LMMS Team", "description": "Estudio de producción musical open source, alternativa a FL Studio.", "category": "audio", "wingetId": "LMMS.LMMS", "license": "GPL", "website": "https://lmms.io", "tags": ["opensource", "free"] },
-
-  { "id": "obs", "name": "OBS Studio", "developer": "OBS Project", "description": "Software libre líder para grabación y streaming en directo.", "category": "streaming", "wingetId": "OBSProject.OBSStudio", "license": "GPL", "website": "https://obsproject.com", "tags": ["essential", "popular", "opensource", "free"] },
-  { "id": "streamlabs", "name": "Streamlabs Desktop", "developer": "Streamlabs", "description": "Cliente de streaming basado en OBS con plantillas y alertas integradas.", "category": "streaming", "wingetId": "Streamlabs.Streamlabs", "license": "Freeware", "website": "https://streamlabs.com", "tags": ["free", "popular"] },
-
-  { "id": "sumatrapdf", "name": "Sumatra PDF", "developer": "Krzysztof Kowalczyk", "description": "Lector PDF ultraligero, rápido y open source.", "category": "pdf", "wingetId": "SumatraPDF.SumatraPDF", "license": "GPL", "website": "https://www.sumatrapdfreader.org", "tags": ["essential", "opensource", "free", "lightweight", "recommended"] },
-  { "id": "pdf24", "name": "PDF24 Creator", "developer": "geek software GmbH", "description": "Suite gratuita para crear, editar y convertir documentos PDF.", "category": "pdf", "wingetId": "geeksoftwareGmbH.PDF24Creator", "license": "Freeware", "website": "https://www.pdf24.org", "tags": ["free", "essential"] },
-  { "id": "foxit-reader", "name": "Foxit Reader", "developer": "Foxit Software", "description": "Lector PDF rápido con funciones de anotación y formularios.", "category": "pdf", "wingetId": "Foxit.FoxitReader", "license": "Freeware", "website": "https://www.foxit.com", "tags": ["free"] },
-
-  { "id": "onlyoffice", "name": "OnlyOffice Desktop Editors", "developer": "Ascensio System SIA", "description": "Suite ofimática open source compatible con formatos de MS Office.", "category": "office", "wingetId": "ONLYOFFICE.DesktopEditors", "license": "GPL", "website": "https://www.onlyoffice.com", "tags": ["opensource", "free", "recommended"] },
-  { "id": "libreoffice", "name": "LibreOffice", "developer": "The Document Foundation", "description": "Suite ofimática libre y completa: Writer, Calc, Impress y más.", "category": "office", "wingetId": "TheDocumentFoundation.LibreOffice", "license": "GPL", "website": "https://www.libreoffice.org", "tags": ["popular", "opensource", "free", "essential"] },
-  { "id": "openoffice", "name": "Apache OpenOffice", "developer": "Apache Software Foundation", "description": "Suite ofimática libre con larga trayectoria.", "category": "office", "wingetId": "Apache.OpenOffice", "license": "Apache-2.0", "website": "https://www.openoffice.org", "tags": ["opensource", "free"] },
-
-  { "id": "thunderbird", "name": "Mozilla Thunderbird", "developer": "Mozilla", "description": "Cliente de correo libre, potente y multiplataforma.", "category": "email", "wingetId": "Mozilla.Thunderbird", "license": "Other", "website": "https://www.thunderbird.net", "tags": ["popular", "opensource", "free"] },
-  { "id": "betterbird", "name": "Betterbird", "developer": "Betterbird Project", "description": "Fork mejorado de Thunderbird con extras útiles.", "category": "email", "wingetId": "Betterbird.Betterbird", "license": "Other", "website": "https://www.betterbird.eu", "tags": ["opensource", "free", "new"] },
-  { "id": "emclient", "name": "eM Client", "developer": "eM Client s.r.o.", "description": "Cliente de correo moderno con calendario, contactos y chat.", "category": "email", "wingetId": "eMClient.eMClient", "license": "Freeware", "website": "https://www.emclient.com", "tags": ["free"] },
-  { "id": "mailbird", "name": "Mailbird", "developer": "Mailbird Inc.", "description": "Cliente de correo unificado con integración de apps.", "category": "email", "wingetId": "Mailbird.Mailbird", "license": "Freeware", "website": "https://www.getmailbird.com", "tags": ["free"] },
-
-  { "id": "winrar", "name": "WinRAR", "developer": "win.rar GmbH", "description": "Compresor/descompresor con soporte para RAR, ZIP y muchos más formatos.", "category": "utilities", "wingetId": "RARLab.WinRAR", "license": "Proprietary", "website": "https://www.win-rar.com", "tags": ["popular"] },
-  { "id": "7zip", "name": "7-Zip", "developer": "Igor Pavlov", "description": "Archivador open source con alta tasa de compresión.", "category": "utilities", "wingetId": "7zip.7zip", "license": "Other", "website": "https://www.7-zip.org", "tags": ["essential", "popular", "opensource", "free", "lightweight"] },
-  { "id": "rufus", "name": "Rufus", "developer": "Pete Batard", "description": "Crea USB de arranque rápidos y fiables para Windows y Linux.", "category": "utilities", "wingetId": "Rufus.Rufus", "license": "GPL", "website": "https://rufus.ie", "tags": ["essential", "opensource", "free", "lightweight"] },
-  { "id": "etcher", "name": "balenaEtcher", "developer": "Balena", "description": "Graba imágenes de disco a USB/SD con interfaz simple y bonita.", "category": "utilities", "wingetId": "Balena.Etcher", "license": "Apache-2.0", "website": "https://etcher.balena.io", "tags": ["opensource", "free"] },
-  { "id": "everything", "name": "Everything", "developer": "voidtools", "description": "Búsqueda instantánea de archivos y carpetas en Windows.", "category": "utilities", "wingetId": "voidtools.Everything", "license": "Freeware", "website": "https://www.voidtools.com", "tags": ["essential", "free", "lightweight", "recommended"] },
-  { "id": "powertoys", "name": "Microsoft PowerToys", "developer": "Microsoft", "description": "Colección de utilidades para usuarios avanzados de Windows.", "category": "utilities", "wingetId": "Microsoft.PowerToys", "license": "MIT", "website": "https://learn.microsoft.com/windows/powertoys/", "tags": ["essential", "opensource", "free", "popular"] },
-  { "id": "imageglass", "name": "ImageGlass", "developer": "Duong Dieu Phap", "description": "Visor de imágenes moderno y gratuito. Abre fotos, navega entre carpetas y reemplaza al visor de Fotos de Windows.", "category": "utilities", "wingetId": "DuongDieuPhap.ImageGlass", "license": "GPL", "website": "https://imageglass.org", "tags": ["essential", "opensource", "free", "recommended", "lightweight"] },
-  { "id": "irfanview", "name": "IrfanView", "developer": "Irfan Skiljan", "description": "Visor de imágenes ultrarrápido y ligero. Ideal para abrir y recorrer miles de fotos sin consumir recursos.", "category": "utilities", "wingetId": "IrfanSkiljan.IrfanView", "license": "Freeware", "website": "https://www.irfanview.com", "tags": ["popular", "free", "lightweight"] },
-  { "id": "openshell", "name": "Open-Shell", "developer": "Open-Shell Team", "description": "Menú Inicio clásico gratuito y open source. Recupera el estilo de Windows 7 o XP: botón Inicio, menú desplegable y carpeta de acceso rápido.", "category": "utilities", "wingetId": "Open-Shell.Open-Shell-Menu", "license": "MIT", "website": "https://open-shell.github.io/Open-Shell-Menu/", "tags": ["opensource", "free", "recommended", "popular"] },
-  { "id": "aurora", "name": "Aurora Windows Optimizer", "developer": "azurejoga", "description": "Optimizador gratuito y open source para Windows. Elimina bloatware, mejora el rendimiento, limpia servicios innecesarios y ajusta el sistema para que el PC vaya más fluido.", "category": "utilities", "wingetId": "azurejoga.aurorawindowsoptimizer", "license": "MIT", "website": "https://github.com/azurejoga/Aurora-Windows-Optimizer", "tags": ["opensource", "free", "recommended", "essential"] },
-  { "id": "bleachbit", "name": "BleachBit", "developer": "Andrew Ziem", "description": "Limpia caché, cookies, archivos temporales y basura del sistema. Libera espacio en disco y protege tu privacidad. Completamente gratuito y open source.", "category": "utilities", "wingetId": "BleachBit.BleachBit", "license": "GPL", "website": "https://www.bleachbit.org", "tags": ["opensource", "free", "recommended", "lightweight"] },
-  { "id": "shutup10", "name": "O&O ShutUp10++", "developer": "O&O Software", "description": "Desactiva telemetría, rastreo y funciones invasivas de Windows 10/11. Mejora la privacidad y el rendimiento del sistema. Gratuito para uso personal y empresarial.", "category": "utilities", "wingetId": "OO-Software.ShutUp10", "license": "Freeware", "website": "https://www.oo-software.com/products/ShutUp10", "tags": ["free", "recommended", "lightweight"] },
-  { "id": "minitool-partition", "name": "MiniTool Partition Wizard Free", "developer": "MiniTool Software", "description": "Formatea y gestiona discos duros, particiones, pendrives USB y unidades externas. Crea, borra, redimensiona y convierte entre FAT32 y NTFS sin perder datos.", "category": "utilities", "wingetId": "MiniTool.PartitionWizard.Free", "license": "Freeware", "website": "https://www.partitionwizard.com/free-partition-manager.html", "tags": ["free", "recommended", "essential"] },
-  { "id": "sdformatter", "name": "SD Card Formatter", "developer": "SD Association", "description": "Formateador oficial gratuito para tarjetas SD y microSD. Restaura el formato correcto según el estándar de la industria, ideal para cámaras, Raspberry Pi y móviles.", "category": "utilities", "wingetId": "SDAssociation.SDMemoryCardFormatter", "license": "Freeware", "website": "https://www.sdcard.org/downloads/formatter/", "tags": ["free", "recommended", "lightweight"] },
-  { "id": "sdio", "name": "Snappy Driver Installer Origin", "developer": "Glenn Delahoy", "description": "Instala drivers de red, WiFi, chipset y más sin necesitar Internet. Tras formatear, ábrelo desde un USB: detecta hardware faltante e instala los drivers para recuperar la conexión. Descarga los packs de drivers en otro PC con Internet y cópialos al pendrive.", "category": "utilities", "wingetId": "GlennDelahoy.SnappyDriverInstallerOrigin", "license": "GPL", "website": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/", "tags": ["opensource", "free", "recommended", "essential"] },
-
-  { "id": "fdm", "name": "Free Download Manager", "developer": "FreeDownloadManager.ORG", "description": "Gestor de descargas potente y gratuito.", "category": "downloaders", "wingetId": "FreeDownloadManager.FreeDownloadManager", "license": "Freeware", "website": "https://www.freedownloadmanager.org", "tags": ["free"] },
-  { "id": "motrix", "name": "Motrix", "developer": "agalwood", "description": "Gestor de descargas moderno (HTTP/FTP/BitTorrent/Magnet).", "category": "downloaders", "wingetId": "agalwood.Motrix", "license": "MIT", "website": "https://motrix.app", "tags": ["opensource", "free", "recommended"] },
-  { "id": "xdm", "name": "Xtreme Download Manager", "developer": "Subhra Das Gupta", "description": "Acelerador de descargas multiplataforma.", "category": "downloaders", "wingetId": "subhra74.XtremeDownloadManager", "license": "GPL", "website": "https://xtremedownloadmanager.com", "tags": ["opensource", "free"] },
-
-  { "id": "anydesk", "name": "AnyDesk", "developer": "AnyDesk Software GmbH", "description": "Acceso remoto rápido y de baja latencia.", "category": "remote", "wingetId": "AnyDesk.AnyDesk", "license": "Freeware", "website": "https://anydesk.com", "tags": ["popular", "free"] },
-  { "id": "rustdesk", "name": "RustDesk", "developer": "RustDesk Team", "description": "Alternativa open source a TeamViewer/AnyDesk.", "category": "remote", "wingetId": "RustDesk.RustDesk", "license": "GPL", "website": "https://rustdesk.com", "tags": ["opensource", "free", "recommended"] },
-  { "id": "teamviewer", "name": "TeamViewer", "developer": "TeamViewer GmbH", "description": "Software clásico de acceso remoto, gratuito para uso personal.", "category": "remote", "wingetId": "TeamViewer.TeamViewer", "license": "Freeware", "website": "https://www.teamviewer.com", "tags": ["popular", "free"] },
-
-  { "id": "googledrive", "name": "Google Drive", "developer": "Google", "description": "Cliente de escritorio para sincronizar archivos con Google Drive.", "category": "cloud", "wingetId": "Google.GoogleDrive", "license": "Freeware", "website": "https://www.google.com/drive", "tags": ["popular", "free"] },
-  { "id": "dropbox", "name": "Dropbox", "developer": "Dropbox", "description": "Sincronización de archivos en la nube.", "category": "cloud", "wingetId": "Dropbox.Dropbox", "license": "Freeware", "website": "https://www.dropbox.com", "tags": ["popular", "free"] },
-  { "id": "mega", "name": "MEGAsync", "developer": "Mega Limited", "description": "Cliente de sincronización para MEGA, con cifrado de extremo a extremo.", "category": "cloud", "wingetId": "Mega.MEGASync", "license": "Freeware", "website": "https://mega.io", "tags": ["free"] },
-  { "id": "nextcloud", "name": "Nextcloud Desktop", "developer": "Nextcloud GmbH", "description": "Cliente para sincronizar archivos con tu servidor Nextcloud.", "category": "cloud", "wingetId": "Nextcloud.NextcloudDesktop", "license": "GPL", "website": "https://nextcloud.com", "tags": ["opensource", "free"] },
-  { "id": "onedrive", "name": "OneDrive", "developer": "Microsoft", "description": "Cliente oficial de OneDrive para Windows.", "category": "cloud", "wingetId": "Microsoft.OneDrive", "license": "Freeware", "website": "https://onedrive.live.com", "tags": ["popular", "free"] },
-
-  { "id": "notepadpp", "name": "Notepad++", "developer": "Don Ho", "description": "Editor de texto y código clásico, rápido y extensible.", "category": "dev", "wingetId": "Notepad++.Notepad++", "license": "GPL", "website": "https://notepad-plus-plus.org", "tags": ["essential", "popular", "opensource", "free", "lightweight"] },
-  { "id": "vscode", "name": "Visual Studio Code", "developer": "Microsoft", "description": "Editor de código moderno con miles de extensiones.", "category": "dev", "wingetId": "Microsoft.VisualStudioCode", "license": "MIT", "website": "https://code.visualstudio.com", "tags": ["essential", "popular", "opensource", "free", "dev"] },
-  { "id": "git", "name": "Git", "developer": "Git Project", "description": "Sistema de control de versiones distribuido estándar de la industria.", "category": "dev", "wingetId": "Git.Git", "license": "GPL", "website": "https://git-scm.com", "tags": ["essential", "opensource", "free", "dev"] },
-  { "id": "docker", "name": "Docker Desktop", "developer": "Docker Inc.", "description": "Plataforma de contenedores para desarrollo local.", "category": "dev", "wingetId": "Docker.DockerDesktop", "license": "Freeware", "website": "https://www.docker.com", "tags": ["free", "dev"] },
-  { "id": "nodejs", "name": "Node.js LTS", "developer": "OpenJS Foundation", "description": "Runtime de JavaScript y npm.", "category": "dev", "wingetId": "OpenJS.NodeJS.LTS", "license": "MIT", "website": "https://nodejs.org", "tags": ["essential", "opensource", "free", "dev"] },
-  { "id": "postman", "name": "Postman", "developer": "Postman Inc.", "description": "Plataforma para construir y probar APIs.", "category": "dev", "wingetId": "Postman.Postman", "license": "Freeware", "website": "https://www.postman.com", "tags": ["free", "dev", "popular"] },
-
-  { "id": "steam", "name": "Steam", "developer": "Valve", "description": "Tienda y launcher de videojuegos de referencia.", "category": "gaming", "wingetId": "Valve.Steam", "license": "Freeware", "website": "https://store.steampowered.com", "tags": ["essential", "popular", "free", "gaming"] },
-  { "id": "epicgames", "name": "Epic Games Launcher", "developer": "Epic Games", "description": "Launcher de Epic Games con juegos gratis cada semana.", "category": "gaming", "wingetId": "EpicGames.EpicGamesLauncher", "license": "Freeware", "website": "https://www.epicgames.com", "tags": ["popular", "free", "gaming"] },
-  { "id": "heroic", "name": "Heroic Games Launcher", "developer": "Heroic Team", "description": "Launcher open source para Epic, GOG y Amazon Games.", "category": "gaming", "wingetId": "HeroicGamesLauncher.HeroicGamesLauncher", "license": "GPL", "website": "https://heroicgameslauncher.com", "tags": ["opensource", "free", "gaming", "recommended"] },
-  { "id": "playnite", "name": "Playnite", "developer": "Josef Nemec", "description": "Unifica todas tus bibliotecas de juegos en una sola interfaz.", "category": "gaming", "wingetId": "Playnite.Playnite", "license": "MIT", "website": "https://playnite.link", "tags": ["opensource", "free", "gaming", "recommended"] },
-  { "id": "gog", "name": "GOG Galaxy", "developer": "GOG", "description": "Cliente de GOG para juegos sin DRM.", "category": "gaming", "wingetId": "GOG.Galaxy", "license": "Freeware", "website": "https://www.gog.com/galaxy", "tags": ["free", "gaming"] },
-
-  { "id": "discord", "name": "Discord", "developer": "Discord Inc.", "description": "Chat de voz, vídeo y texto para comunidades y amigos.", "category": "communication", "wingetId": "Discord.Discord", "license": "Freeware", "website": "https://discord.com", "tags": ["essential", "popular", "free"] },
-  { "id": "telegram", "name": "Telegram Desktop", "developer": "Telegram FZ-LLC", "description": "Mensajería rápida y segura, multidispositivo.", "category": "communication", "wingetId": "Telegram.TelegramDesktop", "license": "GPL", "website": "https://telegram.org", "tags": ["popular", "opensource", "free"] },
-  { "id": "signal", "name": "Signal Desktop", "developer": "Signal Foundation", "description": "Mensajería cifrada centrada en la privacidad.", "category": "communication", "wingetId": "OpenWhisperSystems.Signal", "license": "GPL", "website": "https://signal.org", "tags": ["opensource", "free", "recommended"] },
-
-  { "id": "ollama", "name": "Ollama", "developer": "Ollama", "description": "Ejecuta modelos de lenguaje localmente desde la línea de comandos.", "category": "ai", "wingetId": "Ollama.Ollama", "license": "MIT", "website": "https://ollama.com", "tags": ["opensource", "free", "new", "recommended"] },
-  { "id": "lmstudio", "name": "LM Studio", "developer": "LM Studio", "description": "Interfaz de escritorio para descargar y chatear con LLMs locales.", "category": "ai", "wingetId": "LMStudio.LMStudio", "license": "Freeware", "website": "https://lmstudio.ai", "tags": ["free", "new", "recommended"] },
-  { "id": "jan", "name": "Jan", "developer": "Jan", "description": "Alternativa open source a ChatGPT que corre 100% offline.", "category": "ai", "wingetId": "Jan.Jan", "license": "Apache-2.0", "website": "https://jan.ai", "tags": ["opensource", "free", "new"] },
-  { "id": "openwebui", "name": "Open WebUI", "developer": "Open WebUI", "description": "Interfaz web amigable para interactuar con LLMs locales.", "category": "ai", "wingetId": "OpenWebUI.OpenWebUI", "license": "MIT", "website": "https://openwebui.com", "tags": ["opensource", "free", "new"] },
-
-  { "id": "malwarebytes", "name": "Malwarebytes", "developer": "Malwarebytes", "description": "Antimalware potente para detectar y eliminar amenazas.", "category": "security", "wingetId": "Malwarebytes.Malwarebytes", "license": "Freeware", "website": "https://www.malwarebytes.com", "tags": ["popular", "free"] },
-  { "id": "bitdefender", "name": "Bitdefender Antivirus Free", "developer": "Bitdefender", "description": "Antivirus gratuito ligero y de buena reputación.", "category": "security", "wingetId": "Bitdefender.Bitdefender", "license": "Freeware", "website": "https://www.bitdefender.com", "tags": ["free"] },
-  { "id": "avast", "name": "Avast Free Antivirus", "developer": "Avast", "description": "Antivirus gratuito clásico para Windows.", "category": "security", "wingetId": "Avast.Avast", "license": "Freeware", "website": "https://www.avast.com", "tags": ["popular", "free"] }
+  {
+    "id": "chrome",
+    "name": "Google Chrome",
+    "developer": "Google",
+    "description": "Navegador web rápido, seguro y con un gran ecosistema de extensiones.",
+    "category": "browsers",
+    "wingetId": "Google.Chrome",
+    "license": "Freeware",
+    "website": "https://www.google.com/chrome",
+    "tags": [
+      "popular",
+      "free",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/chrome.svg"
+  },
+  {
+    "id": "firefox",
+    "name": "Mozilla Firefox",
+    "developer": "Mozilla",
+    "description": "Navegador libre, centrado en la privacidad y altamente personalizable.",
+    "category": "browsers",
+    "wingetId": "Mozilla.Firefox",
+    "license": "Other",
+    "website": "https://www.mozilla.org/firefox",
+    "tags": [
+      "popular",
+      "opensource",
+      "free",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/firefox.svg"
+  },
+  {
+    "id": "brave",
+    "name": "Brave",
+    "developer": "Brave Software",
+    "description": "Navegador basado en Chromium con bloqueador de anuncios y rastreadores integrado.",
+    "category": "browsers",
+    "wingetId": "Brave.Brave",
+    "license": "Other",
+    "website": "https://brave.com",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/brave.svg"
+  },
+  {
+    "id": "opera",
+    "name": "Opera",
+    "developer": "Opera Software",
+    "description": "Navegador rápido con VPN gratuita integrada y mensajería en barra lateral.",
+    "category": "browsers",
+    "wingetId": "Opera.Opera",
+    "license": "Freeware",
+    "website": "https://www.opera.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/opera.svg"
+  },
+  {
+    "id": "vivaldi",
+    "name": "Vivaldi",
+    "developer": "Vivaldi Technologies",
+    "description": "Navegador altamente personalizable orientado a usuarios avanzados.",
+    "category": "browsers",
+    "wingetId": "Vivaldi.Vivaldi",
+    "license": "Freeware",
+    "website": "https://vivaldi.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/vivaldi.svg"
+  },
+  {
+    "id": "vlc",
+    "name": "VLC media player",
+    "developer": "VideoLAN",
+    "description": "Reproductor multimedia libre y gratuito que reproduce casi cualquier formato.",
+    "category": "multimedia",
+    "wingetId": "VideoLAN.VLC",
+    "license": "GPL",
+    "website": "https://www.videolan.org/vlc",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/vlc.svg"
+  },
+  {
+    "id": "kodi",
+    "name": "Kodi",
+    "developer": "Kodi Foundation",
+    "description": "Centro multimedia open source para gestionar y reproducir tu colección.",
+    "category": "multimedia",
+    "wingetId": "XBMCFoundation.Kodi",
+    "license": "GPL",
+    "website": "https://kodi.tv",
+    "tags": [
+      "opensource",
+      "free",
+      "multimedia"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/kodi.svg"
+  },
+  {
+    "id": "handbrake",
+    "name": "HandBrake",
+    "developer": "HandBrake Team",
+    "description": "Transcodificador de vídeo open source para convertir entre múltiples formatos.",
+    "category": "multimedia",
+    "wingetId": "HandBrake.HandBrake",
+    "license": "GPL",
+    "website": "https://handbrake.fr",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/handbrake.png"
+  },
+  {
+    "id": "mkvtoolnix",
+    "name": "MKVToolNix",
+    "developer": "Moritz Bunkus",
+    "description": "Conjunto de herramientas para crear, inspeccionar y editar archivos MKV.",
+    "category": "multimedia",
+    "wingetId": "MoritzBunkus.MKVToolNix",
+    "license": "GPL",
+    "website": "https://mkvtoolnix.download",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/mkvtoolnix.png"
+  },
+  {
+    "id": "kdenlive",
+    "name": "Kdenlive",
+    "developer": "KDE",
+    "description": "Editor de vídeo no lineal libre y multiplataforma.",
+    "category": "video",
+    "wingetId": "KDE.Kdenlive",
+    "license": "GPL",
+    "website": "https://kdenlive.org",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/kdenlive.png"
+  },
+  {
+    "id": "shotcut",
+    "name": "Shotcut",
+    "developer": "Meltytech, LLC",
+    "description": "Editor de vídeo open source con soporte para multitud de formatos.",
+    "category": "video",
+    "wingetId": "Meltytech.Shotcut",
+    "license": "GPL",
+    "website": "https://shotcut.org",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/shotcut.png"
+  },
+  {
+    "id": "olive",
+    "name": "Olive",
+    "developer": "Olive Team",
+    "description": "Editor de vídeo no lineal moderno y open source (en desarrollo activo).",
+    "category": "video",
+    "wingetId": "OliveTeam.Olive",
+    "license": "GPL",
+    "website": "https://www.olivevideoeditor.org",
+    "tags": [
+      "opensource",
+      "free",
+      "new"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/olive.png"
+  },
+  {
+    "id": "losslesscut",
+    "name": "LosslessCut",
+    "developer": "mifi",
+    "description": "Recorta y une vídeos sin recodificar, sin pérdida de calidad.",
+    "category": "video",
+    "wingetId": "mifi.lossless-cut",
+    "license": "GPL",
+    "website": "https://mifi.no/losslesscut",
+    "tags": [
+      "opensource",
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/losslesscut.png"
+  },
+  {
+    "id": "gimp",
+    "name": "GIMP",
+    "developer": "The GIMP Team",
+    "description": "Editor de imágenes libre y potente, alternativa a Photoshop.",
+    "category": "photo",
+    "wingetId": "GIMP.GIMP",
+    "license": "GPL",
+    "website": "https://www.gimp.org",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/gimp.svg"
+  },
+  {
+    "id": "paintnet",
+    "name": "Paint.NET",
+    "developer": "dotPDN LLC",
+    "description": "Editor de imágenes ligero y muy fácil de usar.",
+    "category": "photo",
+    "wingetId": "dotPDN.PaintDotNet",
+    "license": "Freeware",
+    "website": "https://www.getpaint.net",
+    "tags": [
+      "free",
+      "lightweight",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/paintnet.png"
+  },
+  {
+    "id": "krita",
+    "name": "Krita",
+    "developer": "KDE",
+    "description": "Herramienta open source para ilustración digital y pintura.",
+    "category": "photo",
+    "wingetId": "KDE.Krita",
+    "license": "GPL",
+    "website": "https://krita.org",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/krita.svg"
+  },
+  {
+    "id": "inkscape",
+    "name": "Inkscape",
+    "developer": "Inkscape Project",
+    "description": "Editor de gráficos vectoriales SVG libre y gratuito.",
+    "category": "photo",
+    "wingetId": "Inkscape.Inkscape",
+    "license": "GPL",
+    "website": "https://inkscape.org",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/inkscape.svg"
+  },
+  {
+    "id": "reaper",
+    "name": "REAPER",
+    "developer": "Cockos Inc.",
+    "description": "DAW completa, ligera y muy estable. Licencia de evaluación generosa.",
+    "category": "audio",
+    "wingetId": "Cockos.REAPER",
+    "license": "Proprietary",
+    "website": "https://www.reaper.fm",
+    "tags": [
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/reaper.png"
+  },
+  {
+    "id": "audacity",
+    "name": "Audacity",
+    "developer": "Audacity Team",
+    "description": "Editor de audio multipista libre, simple y potente.",
+    "category": "audio",
+    "wingetId": "Audacity.Audacity",
+    "license": "GPL",
+    "website": "https://www.audacityteam.org",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/audacity.svg"
+  },
+  {
+    "id": "ocenaudio",
+    "name": "Ocenaudio",
+    "developer": "Ocenaudio Team",
+    "description": "Editor de audio rápido y fácil de usar para tareas habituales.",
+    "category": "audio",
+    "wingetId": "ocenaudio.ocenaudio",
+    "license": "Freeware",
+    "website": "https://www.ocenaudio.com",
+    "tags": [
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/ocenaudio.png"
+  },
+  {
+    "id": "lmms",
+    "name": "LMMS",
+    "developer": "LMMS Team",
+    "description": "Estudio de producción musical open source, alternativa a FL Studio.",
+    "category": "audio",
+    "wingetId": "LMMS.LMMS",
+    "license": "GPL",
+    "website": "https://lmms.io",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/lmms.svg"
+  },
+  {
+    "id": "obs",
+    "name": "OBS Studio",
+    "developer": "OBS Project",
+    "description": "Software libre líder para grabación y streaming en directo.",
+    "category": "streaming",
+    "wingetId": "OBSProject.OBSStudio",
+    "license": "GPL",
+    "website": "https://obsproject.com",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/obs.svg"
+  },
+  {
+    "id": "streamlabs",
+    "name": "Streamlabs Desktop",
+    "developer": "Streamlabs",
+    "description": "Cliente de streaming basado en OBS con plantillas y alertas integradas.",
+    "category": "streaming",
+    "wingetId": "Streamlabs.Streamlabs",
+    "license": "Freeware",
+    "website": "https://streamlabs.com",
+    "tags": [
+      "free",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/streamlabs.svg"
+  },
+  {
+    "id": "sumatrapdf",
+    "name": "Sumatra PDF",
+    "developer": "Krzysztof Kowalczyk",
+    "description": "Lector PDF ultraligero, rápido y open source.",
+    "category": "pdf",
+    "wingetId": "SumatraPDF.SumatraPDF",
+    "license": "GPL",
+    "website": "https://www.sumatrapdfreader.org",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "lightweight",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/sumatrapdf.png"
+  },
+  {
+    "id": "pdf24",
+    "name": "PDF24 Creator",
+    "developer": "geek software GmbH",
+    "description": "Suite gratuita para crear, editar y convertir documentos PDF.",
+    "category": "pdf",
+    "wingetId": "geeksoftwareGmbH.PDF24Creator",
+    "license": "Freeware",
+    "website": "https://www.pdf24.org",
+    "tags": [
+      "free",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/pdf24.png"
+  },
+  {
+    "id": "foxit-reader",
+    "name": "Foxit Reader",
+    "developer": "Foxit Software",
+    "description": "Lector PDF rápido con funciones de anotación y formularios.",
+    "category": "pdf",
+    "wingetId": "Foxit.FoxitReader",
+    "license": "Freeware",
+    "website": "https://www.foxit.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/foxit-reader.png"
+  },
+  {
+    "id": "onlyoffice",
+    "name": "OnlyOffice Desktop Editors",
+    "developer": "Ascensio System SIA",
+    "description": "Suite ofimática open source compatible con formatos de MS Office.",
+    "category": "office",
+    "wingetId": "ONLYOFFICE.DesktopEditors",
+    "license": "GPL",
+    "website": "https://www.onlyoffice.com",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/onlyoffice.svg"
+  },
+  {
+    "id": "libreoffice",
+    "name": "LibreOffice",
+    "developer": "The Document Foundation",
+    "description": "Suite ofimática libre y completa: Writer, Calc, Impress y más.",
+    "category": "office",
+    "wingetId": "TheDocumentFoundation.LibreOffice",
+    "license": "GPL",
+    "website": "https://www.libreoffice.org",
+    "tags": [
+      "popular",
+      "opensource",
+      "free",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/libreoffice.svg"
+  },
+  {
+    "id": "openoffice",
+    "name": "Apache OpenOffice",
+    "developer": "Apache Software Foundation",
+    "description": "Suite ofimática libre con larga trayectoria.",
+    "category": "office",
+    "wingetId": "Apache.OpenOffice",
+    "license": "Apache-2.0",
+    "website": "https://www.openoffice.org",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/openoffice.png"
+  },
+  {
+    "id": "thunderbird",
+    "name": "Mozilla Thunderbird",
+    "developer": "Mozilla",
+    "description": "Cliente de correo libre, potente y multiplataforma.",
+    "category": "email",
+    "wingetId": "Mozilla.Thunderbird",
+    "license": "Other",
+    "website": "https://www.thunderbird.net",
+    "tags": [
+      "popular",
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/thunderbird.svg"
+  },
+  {
+    "id": "betterbird",
+    "name": "Betterbird",
+    "developer": "Betterbird Project",
+    "description": "Fork mejorado de Thunderbird con extras útiles.",
+    "category": "email",
+    "wingetId": "Betterbird.Betterbird",
+    "license": "Other",
+    "website": "https://www.betterbird.eu",
+    "tags": [
+      "opensource",
+      "free",
+      "new"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/betterbird.png"
+  },
+  {
+    "id": "emclient",
+    "name": "eM Client",
+    "developer": "eM Client s.r.o.",
+    "description": "Cliente de correo moderno con calendario, contactos y chat.",
+    "category": "email",
+    "wingetId": "eMClient.eMClient",
+    "license": "Freeware",
+    "website": "https://www.emclient.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/emclient.png"
+  },
+  {
+    "id": "mailbird",
+    "name": "Mailbird",
+    "developer": "Mailbird Inc.",
+    "description": "Cliente de correo unificado con integración de apps.",
+    "category": "email",
+    "wingetId": "Mailbird.Mailbird",
+    "license": "Freeware",
+    "website": "https://www.getmailbird.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/mailbird.png"
+  },
+  {
+    "id": "winrar",
+    "name": "WinRAR",
+    "developer": "win.rar GmbH",
+    "description": "Compresor/descompresor con soporte para RAR, ZIP y muchos más formatos.",
+    "category": "utilities",
+    "wingetId": "RARLab.WinRAR",
+    "license": "Proprietary",
+    "website": "https://www.win-rar.com",
+    "tags": [
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/winrar.png"
+  },
+  {
+    "id": "7zip",
+    "name": "7-Zip",
+    "developer": "Igor Pavlov",
+    "description": "Archivador open source con alta tasa de compresión.",
+    "category": "utilities",
+    "wingetId": "7zip.7zip",
+    "license": "Other",
+    "website": "https://www.7-zip.org",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/7zip.svg"
+  },
+  {
+    "id": "rufus",
+    "name": "Rufus",
+    "developer": "Pete Batard",
+    "description": "Crea USB de arranque rápidos y fiables para Windows y Linux.",
+    "category": "utilities",
+    "wingetId": "Rufus.Rufus",
+    "license": "GPL",
+    "website": "https://rufus.ie",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/rufus.png"
+  },
+  {
+    "id": "etcher",
+    "name": "balenaEtcher",
+    "developer": "Balena",
+    "description": "Graba imágenes de disco a USB/SD con interfaz simple y bonita.",
+    "category": "utilities",
+    "wingetId": "Balena.Etcher",
+    "license": "Apache-2.0",
+    "website": "https://etcher.balena.io",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/etcher.png"
+  },
+  {
+    "id": "everything",
+    "name": "Everything",
+    "developer": "voidtools",
+    "description": "Búsqueda instantánea de archivos y carpetas en Windows.",
+    "category": "utilities",
+    "wingetId": "voidtools.Everything",
+    "license": "Freeware",
+    "website": "https://www.voidtools.com",
+    "tags": [
+      "essential",
+      "free",
+      "lightweight",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/everything.png"
+  },
+  {
+    "id": "powertoys",
+    "name": "Microsoft PowerToys",
+    "developer": "Microsoft",
+    "description": "Colección de utilidades para usuarios avanzados de Windows.",
+    "category": "utilities",
+    "wingetId": "Microsoft.PowerToys",
+    "license": "MIT",
+    "website": "https://learn.microsoft.com/windows/powertoys/",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/powertoys.png"
+  },
+  {
+    "id": "imageglass",
+    "name": "ImageGlass",
+    "developer": "Duong Dieu Phap",
+    "description": "Visor de imágenes moderno y gratuito. Abre fotos, navega entre carpetas y reemplaza al visor de Fotos de Windows.",
+    "category": "utilities",
+    "wingetId": "DuongDieuPhap.ImageGlass",
+    "license": "GPL",
+    "website": "https://imageglass.org",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "recommended",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/imageglass.png"
+  },
+  {
+    "id": "irfanview",
+    "name": "IrfanView",
+    "developer": "Irfan Skiljan",
+    "description": "Visor de imágenes ultrarrápido y ligero. Ideal para abrir y recorrer miles de fotos sin consumir recursos.",
+    "category": "utilities",
+    "wingetId": "IrfanSkiljan.IrfanView",
+    "license": "Freeware",
+    "website": "https://www.irfanview.com",
+    "tags": [
+      "popular",
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/irfanview.png"
+  },
+  {
+    "id": "openshell",
+    "name": "Open-Shell",
+    "developer": "Open-Shell Team",
+    "description": "Menú Inicio clásico gratuito y open source. Recupera el estilo de Windows 7 o XP: botón Inicio, menú desplegable y carpeta de acceso rápido.",
+    "category": "utilities",
+    "wingetId": "Open-Shell.Open-Shell-Menu",
+    "license": "MIT",
+    "website": "https://open-shell.github.io/Open-Shell-Menu/",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/openshell.png"
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora Windows Optimizer",
+    "developer": "azurejoga",
+    "description": "Optimizador gratuito y open source para Windows. Elimina bloatware, mejora el rendimiento, limpia servicios innecesarios y ajusta el sistema para que el PC vaya más fluido.",
+    "category": "utilities",
+    "wingetId": "azurejoga.aurorawindowsoptimizer",
+    "license": "MIT",
+    "website": "https://github.com/azurejoga/Aurora-Windows-Optimizer",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/aurora.png"
+  },
+  {
+    "id": "bleachbit",
+    "name": "BleachBit",
+    "developer": "Andrew Ziem",
+    "description": "Limpia caché, cookies, archivos temporales y basura del sistema. Libera espacio en disco y protege tu privacidad. Completamente gratuito y open source.",
+    "category": "utilities",
+    "wingetId": "BleachBit.BleachBit",
+    "license": "GPL",
+    "website": "https://www.bleachbit.org",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/bleachbit.png"
+  },
+  {
+    "id": "shutup10",
+    "name": "O&O ShutUp10++",
+    "developer": "O&O Software",
+    "description": "Desactiva telemetría, rastreo y funciones invasivas de Windows 10/11. Mejora la privacidad y el rendimiento del sistema. Gratuito para uso personal y empresarial.",
+    "category": "utilities",
+    "wingetId": "OO-Software.ShutUp10",
+    "license": "Freeware",
+    "website": "https://www.oo-software.com/products/ShutUp10",
+    "tags": [
+      "free",
+      "recommended",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/shutup10.png"
+  },
+  {
+    "id": "minitool-partition",
+    "name": "MiniTool Partition Wizard Free",
+    "developer": "MiniTool Software",
+    "description": "Formatea y gestiona discos duros, particiones, pendrives USB y unidades externas. Crea, borra, redimensiona y convierte entre FAT32 y NTFS sin perder datos.",
+    "category": "utilities",
+    "wingetId": "MiniTool.PartitionWizard.Free",
+    "license": "Freeware",
+    "website": "https://www.partitionwizard.com/free-partition-manager.html",
+    "tags": [
+      "free",
+      "recommended",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/minitool-partition.png"
+  },
+  {
+    "id": "sdformatter",
+    "name": "SD Card Formatter",
+    "developer": "SD Association",
+    "description": "Formateador oficial gratuito para tarjetas SD y microSD. Restaura el formato correcto según el estándar de la industria, ideal para cámaras, Raspberry Pi y móviles.",
+    "category": "utilities",
+    "wingetId": "SDAssociation.SDMemoryCardFormatter",
+    "license": "Freeware",
+    "website": "https://www.sdcard.org/downloads/formatter/",
+    "tags": [
+      "free",
+      "recommended",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/sdformatter.png"
+  },
+  {
+    "id": "sdio",
+    "name": "Snappy Driver Installer Origin",
+    "developer": "Glenn Delahoy",
+    "description": "Instala drivers de red, WiFi, chipset y más sin necesitar Internet. Tras formatear, ábrelo desde un USB: detecta hardware faltante e instala los drivers para recuperar la conexión. Descarga los packs de drivers en otro PC con Internet y cópialos al pendrive.",
+    "category": "utilities",
+    "wingetId": "GlennDelahoy.SnappyDriverInstallerOrigin",
+    "license": "GPL",
+    "website": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended",
+      "essential"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/sdio.png"
+  },
+  {
+    "id": "fdm",
+    "name": "Free Download Manager",
+    "developer": "FreeDownloadManager.ORG",
+    "description": "Gestor de descargas potente y gratuito.",
+    "category": "downloaders",
+    "wingetId": "FreeDownloadManager.FreeDownloadManager",
+    "license": "Freeware",
+    "website": "https://www.freedownloadmanager.org",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/fdm.png"
+  },
+  {
+    "id": "motrix",
+    "name": "Motrix",
+    "developer": "agalwood",
+    "description": "Gestor de descargas moderno (HTTP/FTP/BitTorrent/Magnet).",
+    "category": "downloaders",
+    "wingetId": "agalwood.Motrix",
+    "license": "MIT",
+    "website": "https://motrix.app",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/motrix.png"
+  },
+  {
+    "id": "xdm",
+    "name": "Xtreme Download Manager",
+    "developer": "Subhra Das Gupta",
+    "description": "Acelerador de descargas multiplataforma.",
+    "category": "downloaders",
+    "wingetId": "subhra74.XtremeDownloadManager",
+    "license": "GPL",
+    "website": "https://xtremedownloadmanager.com",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/xdm.png"
+  },
+  {
+    "id": "anydesk",
+    "name": "AnyDesk",
+    "developer": "AnyDesk Software GmbH",
+    "description": "Acceso remoto rápido y de baja latencia.",
+    "category": "remote",
+    "wingetId": "AnyDesk.AnyDesk",
+    "license": "Freeware",
+    "website": "https://anydesk.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/anydesk.svg"
+  },
+  {
+    "id": "rustdesk",
+    "name": "RustDesk",
+    "developer": "RustDesk Team",
+    "description": "Alternativa open source a TeamViewer/AnyDesk.",
+    "category": "remote",
+    "wingetId": "RustDesk.RustDesk",
+    "license": "GPL",
+    "website": "https://rustdesk.com",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/rustdesk.svg"
+  },
+  {
+    "id": "teamviewer",
+    "name": "TeamViewer",
+    "developer": "TeamViewer GmbH",
+    "description": "Software clásico de acceso remoto, gratuito para uso personal.",
+    "category": "remote",
+    "wingetId": "TeamViewer.TeamViewer",
+    "license": "Freeware",
+    "website": "https://www.teamviewer.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/teamviewer.svg"
+  },
+  {
+    "id": "googledrive",
+    "name": "Google Drive",
+    "developer": "Google",
+    "description": "Cliente de escritorio para sincronizar archivos con Google Drive.",
+    "category": "cloud",
+    "wingetId": "Google.GoogleDrive",
+    "license": "Freeware",
+    "website": "https://www.google.com/drive",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/googledrive.svg"
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "developer": "Dropbox",
+    "description": "Sincronización de archivos en la nube.",
+    "category": "cloud",
+    "wingetId": "Dropbox.Dropbox",
+    "license": "Freeware",
+    "website": "https://www.dropbox.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/dropbox.svg"
+  },
+  {
+    "id": "mega",
+    "name": "MEGAsync",
+    "developer": "Mega Limited",
+    "description": "Cliente de sincronización para MEGA, con cifrado de extremo a extremo.",
+    "category": "cloud",
+    "wingetId": "Mega.MEGASync",
+    "license": "Freeware",
+    "website": "https://mega.io",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/mega.svg"
+  },
+  {
+    "id": "nextcloud",
+    "name": "Nextcloud Desktop",
+    "developer": "Nextcloud GmbH",
+    "description": "Cliente para sincronizar archivos con tu servidor Nextcloud.",
+    "category": "cloud",
+    "wingetId": "Nextcloud.NextcloudDesktop",
+    "license": "GPL",
+    "website": "https://nextcloud.com",
+    "tags": [
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/nextcloud.svg"
+  },
+  {
+    "id": "onedrive",
+    "name": "OneDrive",
+    "developer": "Microsoft",
+    "description": "Cliente oficial de OneDrive para Windows.",
+    "category": "cloud",
+    "wingetId": "Microsoft.OneDrive",
+    "license": "Freeware",
+    "website": "https://onedrive.live.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/onedrive.png"
+  },
+  {
+    "id": "notepadpp",
+    "name": "Notepad++",
+    "developer": "Don Ho",
+    "description": "Editor de texto y código clásico, rápido y extensible.",
+    "category": "dev",
+    "wingetId": "Notepad++.Notepad++",
+    "license": "GPL",
+    "website": "https://notepad-plus-plus.org",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free",
+      "lightweight"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/notepadpp.svg"
+  },
+  {
+    "id": "vscode",
+    "name": "Visual Studio Code",
+    "developer": "Microsoft",
+    "description": "Editor de código moderno con miles de extensiones.",
+    "category": "dev",
+    "wingetId": "Microsoft.VisualStudioCode",
+    "license": "MIT",
+    "website": "https://code.visualstudio.com",
+    "tags": [
+      "essential",
+      "popular",
+      "opensource",
+      "free",
+      "dev"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/vscode.png"
+  },
+  {
+    "id": "git",
+    "name": "Git",
+    "developer": "Git Project",
+    "description": "Sistema de control de versiones distribuido estándar de la industria.",
+    "category": "dev",
+    "wingetId": "Git.Git",
+    "license": "GPL",
+    "website": "https://git-scm.com",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "dev"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/git.svg"
+  },
+  {
+    "id": "docker",
+    "name": "Docker Desktop",
+    "developer": "Docker Inc.",
+    "description": "Plataforma de contenedores para desarrollo local.",
+    "category": "dev",
+    "wingetId": "Docker.DockerDesktop",
+    "license": "Freeware",
+    "website": "https://www.docker.com",
+    "tags": [
+      "free",
+      "dev"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/docker.svg"
+  },
+  {
+    "id": "nodejs",
+    "name": "Node.js LTS",
+    "developer": "OpenJS Foundation",
+    "description": "Runtime de JavaScript y npm.",
+    "category": "dev",
+    "wingetId": "OpenJS.NodeJS.LTS",
+    "license": "MIT",
+    "website": "https://nodejs.org",
+    "tags": [
+      "essential",
+      "opensource",
+      "free",
+      "dev"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/nodejs.svg"
+  },
+  {
+    "id": "postman",
+    "name": "Postman",
+    "developer": "Postman Inc.",
+    "description": "Plataforma para construir y probar APIs.",
+    "category": "dev",
+    "wingetId": "Postman.Postman",
+    "license": "Freeware",
+    "website": "https://www.postman.com",
+    "tags": [
+      "free",
+      "dev",
+      "popular"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/postman.svg"
+  },
+  {
+    "id": "steam",
+    "name": "Steam",
+    "developer": "Valve",
+    "description": "Tienda y launcher de videojuegos de referencia.",
+    "category": "gaming",
+    "wingetId": "Valve.Steam",
+    "license": "Freeware",
+    "website": "https://store.steampowered.com",
+    "tags": [
+      "essential",
+      "popular",
+      "free",
+      "gaming"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/steam.svg"
+  },
+  {
+    "id": "epicgames",
+    "name": "Epic Games Launcher",
+    "developer": "Epic Games",
+    "description": "Launcher de Epic Games con juegos gratis cada semana.",
+    "category": "gaming",
+    "wingetId": "EpicGames.EpicGamesLauncher",
+    "license": "Freeware",
+    "website": "https://www.epicgames.com",
+    "tags": [
+      "popular",
+      "free",
+      "gaming"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/epicgames.svg"
+  },
+  {
+    "id": "heroic",
+    "name": "Heroic Games Launcher",
+    "developer": "Heroic Team",
+    "description": "Launcher open source para Epic, GOG y Amazon Games.",
+    "category": "gaming",
+    "wingetId": "HeroicGamesLauncher.HeroicGamesLauncher",
+    "license": "GPL",
+    "website": "https://heroicgameslauncher.com",
+    "tags": [
+      "opensource",
+      "free",
+      "gaming",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/heroic.png"
+  },
+  {
+    "id": "playnite",
+    "name": "Playnite",
+    "developer": "Josef Nemec",
+    "description": "Unifica todas tus bibliotecas de juegos en una sola interfaz.",
+    "category": "gaming",
+    "wingetId": "Playnite.Playnite",
+    "license": "MIT",
+    "website": "https://playnite.link",
+    "tags": [
+      "opensource",
+      "free",
+      "gaming",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/playnite.png"
+  },
+  {
+    "id": "gog",
+    "name": "GOG Galaxy",
+    "developer": "GOG",
+    "description": "Cliente de GOG para juegos sin DRM.",
+    "category": "gaming",
+    "wingetId": "GOG.Galaxy",
+    "license": "Freeware",
+    "website": "https://www.gog.com/galaxy",
+    "tags": [
+      "free",
+      "gaming"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/gog.svg"
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "developer": "Discord Inc.",
+    "description": "Chat de voz, vídeo y texto para comunidades y amigos.",
+    "category": "communication",
+    "wingetId": "Discord.Discord",
+    "license": "Freeware",
+    "website": "https://discord.com",
+    "tags": [
+      "essential",
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/discord.svg"
+  },
+  {
+    "id": "telegram",
+    "name": "Telegram Desktop",
+    "developer": "Telegram FZ-LLC",
+    "description": "Mensajería rápida y segura, multidispositivo.",
+    "category": "communication",
+    "wingetId": "Telegram.TelegramDesktop",
+    "license": "GPL",
+    "website": "https://telegram.org",
+    "tags": [
+      "popular",
+      "opensource",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/telegram.svg"
+  },
+  {
+    "id": "signal",
+    "name": "Signal Desktop",
+    "developer": "Signal Foundation",
+    "description": "Mensajería cifrada centrada en la privacidad.",
+    "category": "communication",
+    "wingetId": "OpenWhisperSystems.Signal",
+    "license": "GPL",
+    "website": "https://signal.org",
+    "tags": [
+      "opensource",
+      "free",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/signal.svg"
+  },
+  {
+    "id": "ollama",
+    "name": "Ollama",
+    "developer": "Ollama",
+    "description": "Ejecuta modelos de lenguaje localmente desde la línea de comandos.",
+    "category": "ai",
+    "wingetId": "Ollama.Ollama",
+    "license": "MIT",
+    "website": "https://ollama.com",
+    "tags": [
+      "opensource",
+      "free",
+      "new",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/ollama.svg"
+  },
+  {
+    "id": "lmstudio",
+    "name": "LM Studio",
+    "developer": "LM Studio",
+    "description": "Interfaz de escritorio para descargar y chatear con LLMs locales.",
+    "category": "ai",
+    "wingetId": "LMStudio.LMStudio",
+    "license": "Freeware",
+    "website": "https://lmstudio.ai",
+    "tags": [
+      "free",
+      "new",
+      "recommended"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/lmstudio.png"
+  },
+  {
+    "id": "jan",
+    "name": "Jan",
+    "developer": "Jan",
+    "description": "Alternativa open source a ChatGPT que corre 100% offline.",
+    "category": "ai",
+    "wingetId": "Jan.Jan",
+    "license": "Apache-2.0",
+    "website": "https://jan.ai",
+    "tags": [
+      "opensource",
+      "free",
+      "new"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/jan.png"
+  },
+  {
+    "id": "openwebui",
+    "name": "Open WebUI",
+    "developer": "Open WebUI",
+    "description": "Interfaz web amigable para interactuar con LLMs locales.",
+    "category": "ai",
+    "wingetId": "OpenWebUI.OpenWebUI",
+    "license": "MIT",
+    "website": "https://openwebui.com",
+    "tags": [
+      "opensource",
+      "free",
+      "new"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/openwebui.png"
+  },
+  {
+    "id": "malwarebytes",
+    "name": "Malwarebytes",
+    "developer": "Malwarebytes",
+    "description": "Antimalware potente para detectar y eliminar amenazas.",
+    "category": "security",
+    "wingetId": "Malwarebytes.Malwarebytes",
+    "license": "Freeware",
+    "website": "https://www.malwarebytes.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/malwarebytes.svg"
+  },
+  {
+    "id": "bitdefender",
+    "name": "Bitdefender Antivirus Free",
+    "developer": "Bitdefender",
+    "description": "Antivirus gratuito ligero y de buena reputación.",
+    "category": "security",
+    "wingetId": "Bitdefender.Bitdefender",
+    "license": "Freeware",
+    "website": "https://www.bitdefender.com",
+    "tags": [
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/bitdefender.svg"
+  },
+  {
+    "id": "avast",
+    "name": "Avast Free Antivirus",
+    "developer": "Avast",
+    "description": "Antivirus gratuito clásico para Windows.",
+    "category": "security",
+    "wingetId": "Avast.Avast",
+    "license": "Freeware",
+    "website": "https://www.avast.com",
+    "tags": [
+      "popular",
+      "free"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/avast.svg"
+  }
 ]

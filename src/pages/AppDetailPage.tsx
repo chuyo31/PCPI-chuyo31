@@ -16,6 +16,7 @@ import {
 } from '@/services/installer'
 import { formatSizeMb } from '@/utils/format'
 import { cn } from '@/utils/cn'
+import { AppIcon } from '@/components/AppIcon'
 
 export function AppDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -65,13 +66,11 @@ export function AppDetailPage() {
       </Link>
 
       <header className="flex items-start gap-6">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pcpi-accent to-violet-500 text-4xl font-bold text-white">
-          {app.iconUrl ? (
-            <img src={app.iconUrl} alt="" className="h-full w-full rounded-2xl object-cover" />
-          ) : (
-            app.name.charAt(0)
-          )}
-        </div>
+        <AppIcon
+          app={app}
+          className="h-24 w-24 rounded-2xl text-4xl"
+          imgClassName="rounded-2xl"
+        />
 
         <div className="min-w-0 flex-1">
           <div className="text-sm text-pcpi-text-muted">{app.developer}</div>

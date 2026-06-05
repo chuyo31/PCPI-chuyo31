@@ -4,6 +4,10 @@ dist-electron
 release
 .vite
 
+# Copia generada desde catalog/icons (npm run icons:sync)
+public/icons/*
+!public/icons/.gitkeep
+
 # IDE
 .vscode
 .idea

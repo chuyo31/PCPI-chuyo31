@@ -9,8 +9,10 @@
   "main": "dist-electron/main.js",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run icons:sync && vite",
+    "build": "npm run icons:sync && vite build",
+    "icons:fetch": "node scripts/fetch-app-icons.mjs",
+    "icons:sync": "node scripts/sync-icons-to-public.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",

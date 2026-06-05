@@ -18,6 +18,7 @@ import {
 } from '@/services/installer'
 import { queueStatusLabel } from '@/utils/installStatus'
 import { cn } from '@/utils/cn'
+import { AppIcon } from '@/components/AppIcon'
 
 interface AppCardProps {
   app: AppEntry
@@ -105,7 +106,7 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
 
       <CardContent className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-start gap-3">
-          <AppIcon app={app} />
+          <AppIcon app={app} className="h-10 w-10" imgClassName="rounded-lg" />
           <div className="min-w-0 flex-1">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -193,17 +194,3 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
   )
 }
 
-function AppIcon({ app }: { app: AppEntry }) {
-  // En el esqueleto usamos un placeholder con la inicial del nombre.
-  // Cuando la "Actualización del Catálogo" descargue iconUrl, lo sustituiremos por <img>.
-  const initial = app.name.charAt(0).toUpperCase()
-  return (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-pcpi-accent/80 to-violet-500/80 text-white font-bold">
-      {app.iconUrl ? (
-        <img src={app.iconUrl} alt="" className="h-full w-full rounded-lg object-cover" />
-      ) : (
-        initial
-      )}
-    </div>
-  )
-}

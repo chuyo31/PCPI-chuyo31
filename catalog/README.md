@@ -45,6 +45,14 @@ Edita `catalog.json` y añade un nuevo objeto al array:
 
 - `version`, `releaseDate`, `sizeMb`, `website`, `iconUrl`, `screenshots[]`.
 
+### Iconos / logos
+
+Los logos viven en `catalog/icons/` (p. ej. `chrome.svg`, `vlc.png`).
+
+- La app los muestra desde `public/icons/` (copia automática con `npm run icons:sync`).
+- `iconUrl` apunta al archivo en GitHub raw para usuarios que actualicen el catálogo remoto.
+- Para (re)generar todos los iconos: `npm run icons:fetch`
+
 ### Categorías válidas
 
 `browsers`, `multimedia`, `video`, `photo`, `audio`, `streaming`, `pdf`, `office`,
