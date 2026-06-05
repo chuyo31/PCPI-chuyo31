@@ -5,7 +5,7 @@
     "description": "Lo básico para un PC doméstico: navegación, multimedia, PDF, mensajería y nube.",
     "emoji": "🏠",
     "featured": true,
-    "apps": ["chrome", "firefox", "vlc", "7zip", "sumatrapdf", "pdf24", "telegram", "googledrive"]
+    "apps": ["chrome", "firefox", "vlc", "7zip", "sumatrapdf", "pdf24", "imageglass", "telegram", "googledrive"]
   },
   {
     "id": "oficina",
@@ -67,6 +67,6 @@
     "emoji": "🚀",
     "featured": true,
     "isPostFormat": true,
-    "apps": ["chrome", "vlc", "7zip", "sumatrapdf", "pdf24", "onlyoffice", "notepadpp", "anydesk", "rustdesk", "everything", "powertoys", "googledrive", "telegram"]
+    "apps": ["chrome", "vlc", "7zip", "sumatrapdf", "pdf24", "imageglass", "onlyoffice", "notepadpp", "anydesk", "rustdesk", "everything", "powertoys", "googledrive", "telegram"]
   }
 ]
