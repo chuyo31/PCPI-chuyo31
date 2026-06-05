@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { AppEntry } from '@/catalog/types'
 import { findApp } from './catalog'
+import { indexByWingetId, wingetIdMatchKeys } from '@/utils/wingetId'
 
 export type QueueStatus =
   | 'pending'
@@ -104,14 +105,16 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         })
 
         const result = await window.pcpi.packages.install(current.app.wingetId)
+        const successMessage =
+          'message' in result && typeof result.message === 'string'
+            ? result.message
+            : 'Instalación completada'
 
         const finishedAt = Date.now()
         markItem(set, get, current.app.id, {
           status: result.ok ? 'completed' : 'error',
           percent: result.ok ? 100 : current.percent,
-          message: result.ok
-            ? (result.message ?? 'Instalación completada')
-            : (result.error ?? 'Error desconocido'),
+          message: result.ok ? successMessage : (result.error ?? 'Error desconocido'),
           finishedAt,
         })
 
@@ -141,20 +144,18 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         window.pcpi.packages.listUpgradable(),
       ])
 
-      const installedById: Record<string, string> = {}
-      for (const p of installed) {
-        if (p.id) installedById[p.id.toLowerCase()] = p.version
-      }
+      const installedById = indexByWingetId(
+        installed.filter((p) => p.id),
+        (p) => p.version,
+      )
 
-      const upgradableById: Record<string, UpgradeInfo> = {}
-      for (const p of upgradable) {
-        if (p.id && p.available) {
-          upgradableById[p.id.toLowerCase()] = {
-            current: p.current,
-            available: p.available,
-          }
-        }
-      }
+      const upgradableById = indexByWingetId(
+        upgradable.filter((p) => p.id && p.available),
+        (p) => ({
+          current: p.current,
+          available: p.available,
+        }),
+      )
 
       set({ installedById, upgradableById, systemScanReady: true })
     } catch {
@@ -174,32 +175,54 @@ function markItem(
   })
 }
 
+function lookupInstalled(
+  installedById: Record<string, string>,
+  wingetId: string,
+): string | undefined {
+  for (const key of wingetIdMatchKeys(wingetId)) {
+    const v = installedById[key]
+    if (v) return v
+  }
+  return undefined
+}
+
+function lookupUpgrade(
+  upgradableById: Record<string, UpgradeInfo>,
+  wingetId: string,
+): UpgradeInfo | undefined {
+  for (const key of wingetIdMatchKeys(wingetId)) {
+    const info = upgradableById[key]
+    if (info) return info
+  }
+  return undefined
+}
+
 export function isAppInstalled(
   installedById: Record<string, string>,
   app: AppEntry,
 ): boolean {
-  return app.wingetId.toLowerCase() in installedById
+  return lookupInstalled(installedById, app.wingetId) !== undefined
 }
 
 export function getInstalledVersion(
   installedById: Record<string, string>,
   app: AppEntry,
 ): string | undefined {
-  return installedById[app.wingetId.toLowerCase()]
+  return lookupInstalled(installedById, app.wingetId)
 }
 
 export function isAppUpgradable(
   upgradableById: Record<string, UpgradeInfo>,
   app: AppEntry,
 ): boolean {
-  return app.wingetId.toLowerCase() in upgradableById
+  return lookupUpgrade(upgradableById, app.wingetId) !== undefined
 }
 
 export function getUpgradeInfo(
   upgradableById: Record<string, UpgradeInfo>,
   app: AppEntry,
 ): UpgradeInfo | undefined {
-  return upgradableById[app.wingetId.toLowerCase()]
+  return lookupUpgrade(upgradableById, app.wingetId)
 }
 
 function phaseToQueueStatus(phase: string): QueueStatus {

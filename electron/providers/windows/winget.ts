@@ -316,74 +316,54 @@ interface WingetTableRow {
 
 /**
  * Parser de tablas Winget (list / upgrade).
- * Winget usa una línea continua de guiones como separador, no grupos "---- ----".
+ *
+ * No depende de la fila de cabecera: Winget suele borrarla con el spinner de progreso
+ * (`\r`) al capturar stdout, y el parser antiguo devolvía 0 filas → ninguna app detectada.
  */
 function parseWingetTable(raw: string): WingetTableRow[] {
   const lines = raw
     .replace(/\r/g, '')
     .replace(/\x1b\[[0-9;]*m/g, '')
     .split('\n')
-    .map((l) => l.replace(/\u2026/g, '...'))
-    .filter((line) => {
-      const t = line.trim()
-      if (!t) return false
-      if (t === '-' || /^[\\|\/\-\s]+$/.test(t)) return false
-      if (/^\d[\d.KMB]*\s*(KB|MB|GB|%)/i.test(t)) return false
-      return true
-    })
-
-  let headerIdx = -1
-  for (let i = 0; i < lines.length - 1; i++) {
-    const next = lines[i + 1].trim()
-    if (isWingetSeparatorLine(next) && /\S/.test(lines[i])) {
-      headerIdx = i
-      break
-    }
-  }
-  if (headerIdx === -1) return []
-
-  const header = lines[headerIdx]
-  const cols: Array<{ key: string; start: number }> = []
-  const re = /\S+/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(header)) !== null) {
-    cols.push({ key: m[0].toLowerCase(), start: m.index })
-  }
 
   const rows: WingetTableRow[] = []
-  for (let i = headerIdx + 2; i < lines.length; i++) {
-    const line = lines[i]
+  const rowRe =
+    /\s((?:ARP\\[^\s]+|MSIX\\[^\s]+|[A-Za-z0-9_+.\-]+\.[A-Za-z0-9_+.\-]+))\s+(\S+)(?:\s+(\S+))?(?:\s+(\S+))?\s*$/
+
+  for (const line of lines) {
     const trimmed = line.trim()
     if (!trimmed) continue
-    if (/^\d+\s+(upgrades?|packages?)\s+available/i.test(trimmed)) continue
-    if (isWingetSeparatorLine(trimmed)) continue
+    if (trimmed === '-' || /^[\\|\/\-\s]+$/.test(trimmed)) continue
+    if (/^[-─]{5,}$/.test(trimmed)) continue
+    if (/^\d+\s+(upgrades?|actualizaciones?|packages?|paquetes?)\s+(available|disponibles?)/i.test(trimmed)) {
+      continue
+    }
+    if (/^name\s+id\b/i.test(trimmed)) continue
 
-    const cells: Record<string, string> = {}
-    for (let c = 0; c < cols.length; c++) {
-      const start = cols[c].start
-      const end = c + 1 < cols.length ? cols[c + 1].start : line.length
-      cells[cols[c].key] = line.substring(start, end).trim()
+    const match = line.match(rowRe)
+    if (!match) continue
+
+    const id = match[1].trim()
+    const version = match[2]
+    const third = match[3]
+    const fourth = match[4]
+
+    let available: string | undefined
+    let source: string | undefined
+
+    if (fourth !== undefined) {
+      available = third
+      source = fourth
+    } else if (third !== undefined && /^winget$/i.test(third)) {
+      source = third
+    } else if (third !== undefined) {
+      available = third
     }
 
-    const id = cells.id ?? cells['identificador'] ?? ''
-    if (!id) continue
-
-    rows.push({
-      id,
-      name: cells.name ?? cells.nombre,
-      version: cells.version ?? cells.versión ?? cells.versione ?? '',
-      available: cells.available ?? cells.disponible,
-      source: cells.source ?? cells.origen,
-    })
+    rows.push({ id, version, available, source })
   }
 
   return rows
-}
-
-function isWingetSeparatorLine(line: string): boolean {
-  const t = line.trim()
-  if (!t) return false
-  return /^[-─]{5,}$/.test(t) || /^[-─\s]{8,}$/.test(t) && !/[A-Za-z0-9]/.test(t)
 }
 
 /**
