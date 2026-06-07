@@ -1,0 +1,46 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="55%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="screen" x1="0" y1="280" x2="0" y2="700" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06" />
+    </linearGradient>
+
+    <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14" />
+      <feOffset dx="0" dy="10" result="off" />
+      <feComponentTransfer><feFuncA type="linear" slope="0.35" /></feComponentTransfer>
+      <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="url(#bg)" />
+  <rect x="0" y="0" width="1024" height="600" rx="224" ry="224" fill="url(#gloss)" />
+
+  <rect x="8" y="8" width="1008" height="1008" rx="218" ry="218" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="3" />
+
+  <g filter="url(#iconShadow)">
+    <rect x="208" y="248" width="608" height="408" rx="42" ry="42"
+          fill="url(#screen)" stroke="#ffffff" stroke-width="22" stroke-linejoin="round" />
+
+    <g stroke="#ffffff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <line x1="512" y1="332" x2="512" y2="540" />
+      <polyline points="416,448 512,544 608,448" />
+    </g>
+
+    <line x1="290" y1="614" x2="734" y2="614" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-opacity="0.85" />
+
+    <rect x="430" y="660" width="164" height="44" rx="12" fill="#ffffff" fill-opacity="0.55" />
+    <rect x="316" y="704" width="392" height="48" rx="22" fill="#ffffff" />
+  </g>
+</svg>

@@ -13,6 +13,7 @@
     "build": "npm run icons:sync && vite build",
     "icons:fetch": "node scripts/fetch-app-icons.mjs",
     "icons:sync": "node scripts/sync-icons-to-public.mjs",
+    "icons:app": "node scripts/build-app-icon.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
@@ -51,7 +52,9 @@
     "eslint": "^9.14.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
+    "png-to-ico": "^3.0.1",
     "postcss": "^8.4.49",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
@@ -66,22 +69,36 @@
     },
     "files": [
       "dist",
-      "dist-electron"
+      "dist-electron",
+      "build/icon.ico",
+      "build/icon.png"
     ],
     "win": {
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
+      "icon": "build/icon.ico",
       "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "linux": {
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "icon": "build/icon.png"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
     }
   }
 }

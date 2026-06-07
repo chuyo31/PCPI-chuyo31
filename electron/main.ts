@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain, shell, nativeTheme, session } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, nativeTheme, session, nativeImage } from 'electron'
 import path from 'node:path'
+import fs from 'node:fs'
 import { registerPackageHandlers } from './ipc/packages'
 import { registerSettingsHandlers } from './ipc/settings'
 import { registerHistoryHandlers } from './ipc/history'
@@ -22,7 +23,24 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 let mainWindow: BrowserWindow | null = null
 
+/** Devuelve el icono de la app si existe en build/, o undefined. */
+function resolveAppIcon(): Electron.NativeImage | undefined {
+  const candidates = [
+    path.join(process.env.APP_ROOT ?? '', 'build', process.platform === 'win32' ? 'icon.ico' : 'icon.png'),
+    path.join(process.env.APP_ROOT ?? '', 'build', 'icon.png'),
+  ]
+  for (const file of candidates) {
+    if (file && fs.existsSync(file)) {
+      const img = nativeImage.createFromPath(file)
+      if (!img.isEmpty()) return img
+    }
+  }
+  return undefined
+}
+
 function createWindow() {
+  const icon = resolveAppIcon()
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -32,6 +50,7 @@ function createWindow() {
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#0f172a' : '#f8fafc',
     autoHideMenuBar: true,
     show: false,
+    icon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -59,6 +78,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.chuyo31.pcpi')
+  }
+
   installContentSecurityPolicy()
 
   registerPackageHandlers()
