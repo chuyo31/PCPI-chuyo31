@@ -66,6 +66,24 @@ export class WingetProvider implements PackageProvider {
     }
   }
 
+  download(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
+    return this.runWinget(
+      [
+        'download',
+        '--id',
+        id,
+        '--exact',
+        '--accept-package-agreements',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+        '--source',
+        'winget',
+      ],
+      'download',
+      onProgress,
+    )
+  }
+
   install(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
       [
@@ -122,7 +140,7 @@ export class WingetProvider implements PackageProvider {
 
   private runWinget(
     args: string[],
-    mode: 'install' | 'upgrade' | 'uninstall',
+    mode: 'download' | 'install' | 'upgrade' | 'uninstall',
     onProgress?: (e: ProgressEvent) => void,
   ): Promise<OpResult> {
     return new Promise((resolve) => {
@@ -375,12 +393,16 @@ function interpretWingetExit(
   code: number | null,
   stdout: string,
   stderr: string,
-  mode: 'install' | 'upgrade' | 'uninstall',
+  mode: 'download' | 'install' | 'upgrade' | 'uninstall',
 ): OpResult {
   const output = `${stdout}\n${stderr}`.trim()
 
   if (code === 0) {
-    return { ok: true, message: 'Instalación completada' }
+    return {
+      ok: true,
+      message:
+        mode === 'download' ? 'Descarga completada' : 'Instalación completada',
+    }
   }
 
   if (/successfully installed|instalado correctamente/i.test(output)) {

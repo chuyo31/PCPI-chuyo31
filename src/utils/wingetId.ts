@@ -29,11 +29,11 @@ export function wingetIdMatchKeys(id: string): string[] {
   return [...keys]
 }
 
-export function indexByWingetId<T>(
-  items: Array<{ id: string } & T>,
-  pick: (item: { id: string } & T) => T,
-): Record<string, T> {
-  const map: Record<string, T> = {}
+export function indexByWingetId<I extends { id: string }, V>(
+  items: I[],
+  pick: (item: I) => V,
+): Record<string, V> {
+  const map: Record<string, V> = {}
   for (const item of items) {
     for (const key of wingetIdMatchKeys(item.id)) {
       if (!(key in map)) {

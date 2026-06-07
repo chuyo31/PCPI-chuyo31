@@ -22,7 +22,10 @@ const api = {
     isAvailable: (): Promise<{ available: boolean; version?: string; error?: string }> =>
       ipcRenderer.invoke('packages:is-available'),
 
-    install: (id: string): Promise<{ ok: boolean; error?: string }> =>
+    download: (id: string): Promise<{ ok: boolean; error?: string; message?: string }> =>
+      ipcRenderer.invoke('packages:download', id),
+
+    install: (id: string): Promise<{ ok: boolean; error?: string; message?: string }> =>
       ipcRenderer.invoke('packages:install', id),
 
     upgrade: (id: string): Promise<{ ok: boolean; error?: string }> =>

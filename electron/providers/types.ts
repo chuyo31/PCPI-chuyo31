@@ -48,6 +48,8 @@ export interface PackageProvider {
   listInstalled(): Promise<InstalledPackage[]>
   listUpgradable(): Promise<UpgradablePackage[]>
 
+  /** Descarga el instalador sin ejecutarlo (permite paralelizar descargas). */
+  download(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
   install(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
   upgrade(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
   uninstall(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>

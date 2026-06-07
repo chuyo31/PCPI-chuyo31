@@ -1,12 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { LayoutGrid, List, CheckSquare, Square, Download } from 'lucide-react'
+import { LayoutGrid, List, CheckSquare, Square, Download, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { AppCard } from '@/components/AppCard'
 import { useCatalog } from '@/services/catalog'
 import { CATEGORIES, categoryName } from '@/catalog/categories'
-import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
+import {
+  useInstaller,
+  isAppInstalled,
+  isAppUpgradable,
+} from '@/services/installer'
 import { cn } from '@/utils/cn'
 
 type View = 'grid' | 'list'
@@ -214,32 +218,56 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {apps.map((a) => (
-            <div key={a.id} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md border border-white/5 bg-pcpi-panel-light dark:bg-pcpi-panel px-4 py-3 hover:border-pcpi-accent/30">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="accent-pcpi-accent"
-                    checked={selected.has(a.id)}
-                    onChange={() => toggleSelect(a.id)}
-                  />
-                  <span className="font-medium">{a.name}</span>
-                  <span className="text-xs text-pcpi-text-muted">— {a.developer}</span>
-                </div>
-                <div className="mt-0.5 truncate text-xs text-pcpi-text-muted">{a.description}</div>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => {
-                  enqueue([a.id])
-                  void runQueue()
-                }}
+          {apps.map((a) => {
+            const inst = systemScanReady && isAppInstalled(installedById, a)
+            const upg = systemScanReady && isAppUpgradable(upgradableById, a)
+            return (
+              <div
+                key={a.id}
+                className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md border border-white/5 bg-pcpi-panel-light dark:bg-pcpi-panel px-4 py-3 hover:border-pcpi-accent/30"
               >
-                <Download className="h-3.5 w-3.5" /> Instalar
-              </Button>
-            </div>
-          ))}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="accent-pcpi-accent"
+                      checked={selected.has(a.id)}
+                      onChange={() => toggleSelect(a.id)}
+                    />
+                    <span className="font-medium">{a.name}</span>
+                    <span className="text-xs text-pcpi-text-muted">— {a.developer}</span>
+                  </div>
+                  <div className="mt-0.5 truncate text-xs text-pcpi-text-muted">{a.description}</div>
+                </div>
+                {inst && upg ? (
+                  <Button
+                    size="sm"
+                    variant="success"
+                    onClick={() => {
+                      enqueue([a.id])
+                      void runQueue()
+                    }}
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" /> Actualizar
+                  </Button>
+                ) : inst ? (
+                  <Button size="sm" variant="outline" disabled>
+                    <CheckCircle2 className="h-3.5 w-3.5 text-pcpi-success" /> Instalada
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      enqueue([a.id])
+                      void runQueue()
+                    }}
+                  >
+                    <Download className="h-3.5 w-3.5" /> Instalar
+                  </Button>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
     </div>

@@ -6,7 +6,14 @@ export function queueStatusLabel(
   percent: number,
   message?: string,
 ): string {
-  if (message && (status === 'downloading' || status === 'installing' || status === 'verifying' || status === 'starting')) {
+  if (
+    message &&
+    (status === 'downloading' ||
+      status === 'waiting_install' ||
+      status === 'installing' ||
+      status === 'verifying' ||
+      status === 'starting')
+  ) {
     return message.length > 48 ? `${message.slice(0, 45)}…` : message
   }
 
@@ -17,6 +24,8 @@ export function queueStatusLabel(
       return 'Iniciando Winget…'
     case 'downloading':
       return percent > 0 ? `Descargando ${percent}%` : 'Descargando instalador…'
+    case 'waiting_install':
+      return message ?? 'En cola para instalar…'
     case 'verifying':
       return 'Verificando instalador…'
     case 'installing':
@@ -33,7 +42,11 @@ export function queueStatusLabel(
 /** ¿Mostrar barra indeterminada (sin porcentaje fiable)? */
 export function isIndeterminateProgress(status: QueueStatus, percent: number): boolean {
   return (
-    (status === 'starting' || status === 'downloading' || status === 'verifying' || status === 'installing') &&
+    (status === 'starting' ||
+      status === 'downloading' ||
+      status === 'waiting_install' ||
+      status === 'verifying' ||
+      status === 'installing') &&
     percent <= 0
   )
 }

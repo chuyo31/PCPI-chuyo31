@@ -18,6 +18,9 @@ export class LinuxStubProvider implements PackageProvider {
   }
   async listInstalled(): Promise<InstalledPackage[]> { return [] }
   async listUpgradable(): Promise<UpgradablePackage[]> { return [] }
+  async download(_id: string, _onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
+    return { ok: false, error: 'Linux provider no implementado todavía.' }
+  }
   async install(_id: string, _onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return { ok: false, error: 'Linux provider no implementado todavía.' }
   }

@@ -71,20 +71,6 @@ export function AppCard({ app, selected, onToggleSelect }: AppCardProps) {
         upgradable && 'border-pcpi-warning/40',
       )}
     >
-      {(installed || upgradable) && (
-        <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1">
-          {installed && (
-            <Badge variant="success" className="text-[10px] shadow-sm">
-              Instalada
-            </Badge>
-          )}
-          {upgradable && (
-            <Badge variant="warning" className="text-[10px] shadow-sm">
-              Actualización
-            </Badge>
-          )}
-        </div>
-      )}
       {onToggleSelect && (
         <div
           className="absolute top-3 right-3 z-10"

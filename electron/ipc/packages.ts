@@ -24,6 +24,13 @@ export function registerPackageHandlers() {
     return provider.listUpgradable()
   })
 
+  ipcMain.handle('packages:download', async (event, id: string) => {
+    const provider = getProvider()
+    return provider.download(id, (progress) => {
+      sendProgress(event.sender.id, { id, ...progress })
+    })
+  })
+
   ipcMain.handle('packages:install', async (event, id: string) => {
     const provider = getProvider()
     return provider.install(id, (progress) => {
