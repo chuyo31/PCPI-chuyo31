@@ -19,7 +19,11 @@
     "lint": "eslint . --ext .ts,.tsx",
     "electron:dev": "vite",
     "electron:build": "npm run build && electron-builder",
-    "electron:pack": "npm run build && electron-builder --dir"
+    "electron:pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder --win",
+    "dist:portable": "npm run build && electron-builder --win portable",
+    "dist:installer": "npm run build && electron-builder --win nsis",
+    "dist:zip": "npm run build && electron-builder --win zip"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
@@ -80,18 +84,28 @@
           "arch": [
             "x64"
           ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
         }
       ],
-      "icon": "build/icon.ico",
-      "artifactName": "${productName}-Setup-${version}.${ext}"
+      "icon": "build/icon.ico"
     },
-    "linux": {
-      "icon": "build/icon.png"
-    },
-    "mac": {
-      "icon": "build/icon.png"
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}",
+      "requestExecutionLevel": "user"
     },
     "nsis": {
+      "artifactName": "${productName}-Setup-${version}.${ext}",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
@@ -99,6 +113,12 @@
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
       "installerHeaderIcon": "build/icon.ico"
+    },
+    "linux": {
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "icon": "build/icon.png"
     }
   }
 }
