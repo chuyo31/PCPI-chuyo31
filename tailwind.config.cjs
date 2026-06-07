@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: ['class'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
@@ -10,21 +10,17 @@ export default {
     },
     extend: {
       colors: {
-        // PCPI dark theme palette
         pcpi: {
-          // Dark
           bg: '#0f172a',
           panel: '#1e293b',
           card: '#334155',
           text: '#ffffff',
           'text-muted': '#94a3b8',
-          // Light
           'bg-light': '#f8fafc',
           'panel-light': '#ffffff',
           'card-light': '#f1f5f9',
           'text-light': '#0f172a',
           'text-muted-light': '#64748b',
-          // Accent
           accent: '#3b82f6',
           'accent-hover': '#2563eb',
           success: '#22c55e',
