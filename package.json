@@ -23,7 +23,8 @@
     "dist": "npm run build && electron-builder --win",
     "dist:portable": "npm run build && electron-builder --win portable",
     "dist:installer": "npm run build && electron-builder --win nsis",
-    "dist:zip": "npm run build && electron-builder --win zip"
+    "dist:zip": "npm run build && electron-builder --win zip",
+    "release": "node scripts/publish-release.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
