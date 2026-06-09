@@ -11,6 +11,7 @@
  *   npm run release -- --prerelease
  */
 import fs from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -24,29 +25,38 @@ const isPrerelease = args.includes('--prerelease')
 
 const IS_WIN = process.platform === 'win32'
 
-/** Ejecuta un comando sin shell (args literales). Aborta si falla. */
-function run(cmd, cmdArgs, opts = {}) {
-  const winCmd = IS_WIN && !cmd.endsWith('.cmd') && !cmd.endsWith('.exe') ? `${cmd}.cmd` : cmd
-  const exec = (resolved) =>
-    spawnSync(resolved, cmdArgs, { stdio: 'inherit', shell: false, ...opts })
-
-  let res = exec(winCmd)
-  if (IS_WIN && res.error?.code === 'ENOENT' && winCmd !== cmd) {
-    res = exec(cmd)
+/**
+ * Localiza un ejecutable usando PATH + PATHEXT (Windows) o solo PATH (otros).
+ * Necesario porque spawnSync({shell:false}) no resuelve extensiones por si solo.
+ */
+function which(cmd) {
+  const dirs = (process.env.PATH ?? '').split(IS_WIN ? ';' : ':').filter(Boolean)
+  const exts = IS_WIN
+    ? (process.env.PATHEXT ?? '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean)
+    : ['']
+  for (const dir of dirs) {
+    for (const ext of exts) {
+      const full = path.join(dir, cmd + ext)
+      if (existsSync(full)) return full
+    }
   }
+  return null
+}
+
+function run(cmd, cmdArgs, opts = {}) {
+  const bin = which(cmd)
+  if (!bin) throw new Error(`No encuentro el ejecutable: ${cmd}`)
+  const res = spawnSync(bin, cmdArgs, { stdio: 'inherit', shell: false, ...opts })
   if (res.status !== 0) {
     throw new Error(`Comando fallido: ${cmd} ${cmdArgs.join(' ')}`)
   }
   return res
 }
 
-/** Captura stdout sin abortar (devuelve '' si falla). */
 function capture(cmd, cmdArgs) {
-  const winCmd = IS_WIN && !cmd.endsWith('.cmd') && !cmd.endsWith('.exe') ? `${cmd}.cmd` : cmd
-  let res = spawnSync(winCmd, cmdArgs, { encoding: 'utf8', shell: false })
-  if (IS_WIN && res.error?.code === 'ENOENT' && winCmd !== cmd) {
-    res = spawnSync(cmd, cmdArgs, { encoding: 'utf8', shell: false })
-  }
+  const bin = which(cmd)
+  if (!bin) return ''
+  const res = spawnSync(bin, cmdArgs, { encoding: 'utf8', shell: false })
   return res.status === 0 ? (res.stdout?.trim() ?? '') : ''
 }
 
@@ -58,11 +68,17 @@ async function main() {
   console.log(`\nPCPI v${version}`)
   console.log('='.repeat(40))
 
+  const ghBin = which('gh')
+  if (!ghBin) {
+    console.error('\nERROR: No encuentro gh.exe en el PATH.')
+    console.error('  Instalar:    winget install --id GitHub.cli -e')
+    console.error('  Luego cierra y reabre PowerShell.')
+    process.exit(1)
+  }
+
   const ghVersion = capture('gh', ['--version'])
   if (!ghVersion) {
-    console.error('\nERROR: GitHub CLI (gh) no encontrado o no autenticado.')
-    console.error('  Instalar:    winget install --id GitHub.cli -e')
-    console.error('  Autenticar:  gh auth login')
+    console.error(`\nERROR: gh esta en ${ghBin} pero no responde.`)
     process.exit(1)
   }
   console.log(ghVersion.split('\n')[0])
@@ -92,8 +108,7 @@ async function main() {
     console.error(`\nERROR: No se encontraron ejecutables en ${releaseDir}.`)
     console.error('Archivos presentes:')
     for (const f of files) console.error(`  ${f}`)
-    console.error('\nParece que solo ejecutaste electron-builder --dir (npm run electron:pack).')
-    console.error('Ejecuta el empaquetado completo:  npm run dist')
+    console.error('\nLanza el empaquetado completo:  npm run dist')
     process.exit(1)
   }
 

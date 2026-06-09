@@ -11,7 +11,15 @@ export type QueueStatus =
   | 'verifying'
   | 'installing'
   | 'completed'
+  | 'cancelled'
   | 'error'
+
+/** Estados terminales: no se sobrescriben con eventos posteriores. */
+const TERMINAL_STATUSES: QueueStatus[] = ['completed', 'cancelled', 'error']
+
+function isTerminal(status: QueueStatus): boolean {
+  return TERMINAL_STATUSES.includes(status)
+}
 
 export interface QueueItem {
   app: AppEntry
@@ -44,6 +52,8 @@ interface InstallerState {
   remove: (appId: string) => void
   clearCompleted: () => void
   dismissQueue: () => void
+  cancelItem: (appId: string) => Promise<void>
+  cancelAll: () => Promise<void>
   runQueue: () => Promise<void>
 
   /** wingetId (minúsculas) → versión instalada */
@@ -80,11 +90,46 @@ export const useInstaller = create<InstallerState>((set, get) => ({
   },
 
   clearCompleted: () => {
-    set({ queue: get().queue.filter((q) => q.status !== 'completed' && q.status !== 'error') })
+    set({ queue: get().queue.filter((q) => !isTerminal(q.status)) })
   },
 
   dismissQueue: () => {
     set({ queue: [] })
+  },
+
+  cancelItem: async (appId) => {
+    const item = get().queue.find((q) => q.app.id === appId)
+    if (!item || isTerminal(item.status)) return
+
+    const finishedAt = Date.now()
+    set({
+      queue: get().queue.map((q) =>
+        q.app.id === appId
+          ? {
+              ...q,
+              status: 'cancelled',
+              message: 'Cancelada por el usuario',
+              finishedAt,
+            }
+          : q,
+      ),
+    })
+
+    // Avisamos siempre al backend: si no hay proceso vivo es no-op, y evita
+    // huérfanos cuando la cancelación llega entre `pending` y el spawn real.
+    if (window.pcpi) {
+      try {
+        await window.pcpi.packages.cancel(item.app.wingetId)
+      } catch {
+        // El proceso ya pudo haber muerto por sí solo: lo ignoramos.
+      }
+    }
+  },
+
+  cancelAll: async () => {
+    const items = get().queue.filter((q) => !isTerminal(q.status))
+    if (items.length === 0) return
+    await Promise.all(items.map((i) => get().cancelItem(i.app.id)))
   },
 
   runQueue: async () => {
@@ -99,6 +144,7 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     const unsubscribe = window.pcpi.packages.onProgress((p) => {
       const queue = get().queue.map((item) => {
         if (item.app.wingetId !== p.id) return item
+        if (isTerminal(item.status)) return item
         const status = phaseToQueueStatus(p.phase, item.status)
         const percent =
           p.percent !== undefined ? Math.max(item.percent, p.percent) : item.percent
@@ -127,7 +173,10 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     }
 
     const isQueueIdle = () =>
-      !get().queue.some((q) => ACTIVE_STATUSES.includes(q.status) || q.status === 'pending')
+      !get().queue.some(
+        (q) =>
+          (ACTIVE_STATUSES.includes(q.status) || q.status === 'pending') && !isTerminal(q.status),
+      )
 
     const finishIfIdle = async () => {
       if (!isQueueIdle()) return
@@ -144,7 +193,7 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     const enqueueInstall = (appId: string) => {
       installChain = installChain.then(async () => {
         const item = get().queue.find((q) => q.app.id === appId)
-        if (!item || item.status === 'error' || item.status === 'completed') return
+        if (!item || isTerminal(item.status)) return
 
         const startedAt = Date.now()
         markItem(set, get, appId, {
@@ -155,6 +204,10 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         })
 
         const result = await window.pcpi.packages.install(item.app.wingetId)
+        if (result.cancelled) {
+          // El estado 'cancelled' ya lo aplicó cancelItem; no lo pisamos.
+          return
+        }
         const successMessage =
           'message' in result && typeof result.message === 'string'
             ? result.message
@@ -182,6 +235,9 @@ export const useInstaller = create<InstallerState>((set, get) => ({
       /** Descargas en paralelo; al terminar cada una entra en la cola de instalación. */
       await Promise.all(
         pending.map(async (item) => {
+          const currentBefore = get().queue.find((q) => q.app.id === item.app.id)
+          if (currentBefore && isTerminal(currentBefore.status)) return
+
           const startedAt = Date.now()
           markItem(set, get, item.app.id, {
             status: 'downloading',
@@ -191,6 +247,11 @@ export const useInstaller = create<InstallerState>((set, get) => ({
           })
 
           const result = await window.pcpi.packages.download(item.app.wingetId)
+          const afterStatus = get().queue.find((q) => q.app.id === item.app.id)?.status
+          if (afterStatus === 'cancelled' || result.cancelled) {
+            // No reencolamos ni marcamos error: el item ya está cancelado.
+            return
+          }
 
           if (result.ok) {
             markItem(set, get, item.app.id, {
@@ -253,7 +314,13 @@ function markItem(
   patch: Partial<QueueItem>,
 ) {
   set({
-    queue: get().queue.map((q) => (q.app.id === appId ? { ...q, ...patch } : q)),
+    queue: get().queue.map((q) => {
+      if (q.app.id !== appId) return q
+      // No sobrescribimos un item ya finalizado (completado / cancelado / error)
+      // salvo que el propio patch lo "resucite" cambiando explícitamente a no-terminal.
+      if (isTerminal(q.status) && (!patch.status || isTerminal(patch.status))) return q
+      return { ...q, ...patch }
+    }),
   })
 }
 
@@ -308,13 +375,15 @@ export function getUpgradeInfo(
 }
 
 function phaseToQueueStatus(phase: string, current: QueueStatus): QueueStatus {
-  if (current === 'waiting_install' && phase !== 'completed' && phase !== 'error') {
+  if (current === 'waiting_install' && phase !== 'completed' && phase !== 'error' && phase !== 'cancelled') {
     return 'waiting_install'
   }
 
   switch (phase) {
     case 'completed':
       return current === 'downloading' ? 'waiting_install' : 'completed'
+    case 'cancelled':
+      return 'cancelled'
     case 'error':
       return 'error'
     case 'downloading':

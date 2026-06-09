@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process'
+import { spawn, type ChildProcess } from 'node:child_process'
 import type {
   PackageProvider,
   InstalledPackage,
@@ -16,6 +16,46 @@ import type {
  */
 export class WingetProvider implements PackageProvider {
   readonly id = 'winget'
+
+  /**
+   * Procesos winget activos indexados por id (minúsculas) para soportar cancelación.
+   * Un mismo id puede tener varios procesos (p. ej. download + install en distintos
+   * momentos), por eso almacenamos un Set.
+   */
+  private active = new Map<string, Set<ChildProcess>>()
+  /** Ids cuya operación se canceló manualmente; el close handler los traduce a cancelled. */
+  private cancelled = new Set<string>()
+
+  async cancel(id: string): Promise<{ cancelled: number }> {
+    const key = id.toLowerCase()
+    const procs = this.active.get(key)
+    if (!procs || procs.size === 0) return { cancelled: 0 }
+
+    this.cancelled.add(key)
+    let killed = 0
+    for (const child of procs) {
+      if (killChildTree(child)) killed += 1
+    }
+    return { cancelled: killed }
+  }
+
+  private register(id: string, child: ChildProcess) {
+    const key = id.toLowerCase()
+    let set = this.active.get(key)
+    if (!set) {
+      set = new Set()
+      this.active.set(key, set)
+    }
+    set.add(child)
+  }
+
+  private unregister(id: string, child: ChildProcess) {
+    const key = id.toLowerCase()
+    const set = this.active.get(key)
+    if (!set) return
+    set.delete(child)
+    if (set.size === 0) this.active.delete(key)
+  }
 
   async isAvailable(): Promise<{ available: boolean; version?: string; error?: string }> {
     try {
@@ -68,6 +108,7 @@ export class WingetProvider implements PackageProvider {
 
   download(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
+      id,
       [
         'download',
         '--id',
@@ -86,6 +127,7 @@ export class WingetProvider implements PackageProvider {
 
   install(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
+      id,
       [
         'install',
         '--id',
@@ -105,6 +147,7 @@ export class WingetProvider implements PackageProvider {
 
   upgrade(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
+      id,
       [
         'upgrade',
         '--id',
@@ -124,6 +167,7 @@ export class WingetProvider implements PackageProvider {
 
   uninstall(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return this.runWinget(
+      id,
       [
         'uninstall',
         '--id',
@@ -139,12 +183,14 @@ export class WingetProvider implements PackageProvider {
   }
 
   private runWinget(
+    id: string,
     args: string[],
     mode: 'download' | 'install' | 'upgrade' | 'uninstall',
     onProgress?: (e: ProgressEvent) => void,
   ): Promise<OpResult> {
     return new Promise((resolve) => {
       const child = spawn('winget', args, { windowsHide: true })
+      this.register(id, child)
 
       let stdout = ''
       let stderr = ''
@@ -188,11 +234,25 @@ export class WingetProvider implements PackageProvider {
       })
 
       child.on('error', (err) => {
-        onProgress?.({ phase: 'error', line: err.message })
-        resolve({ ok: false, error: err.message })
+        this.unregister(id, child)
+        const wasCancelled = this.cancelled.delete(id.toLowerCase())
+        if (wasCancelled) {
+          onProgress?.({ phase: 'cancelled', line: 'Operación cancelada por el usuario' })
+          resolve({ ok: false, cancelled: true, error: 'Operación cancelada por el usuario' })
+        } else {
+          onProgress?.({ phase: 'error', line: err.message })
+          resolve({ ok: false, error: err.message })
+        }
       })
 
       child.on('close', (code) => {
+        this.unregister(id, child)
+        const wasCancelled = this.cancelled.delete(id.toLowerCase())
+        if (wasCancelled) {
+          onProgress?.({ phase: 'cancelled', line: 'Operación cancelada por el usuario' })
+          resolve({ ok: false, cancelled: true, error: 'Operación cancelada por el usuario' })
+          return
+        }
         const result = interpretWingetExit(code, stdout, stderr, mode)
         if (result.ok) {
           onProgress?.({
@@ -206,6 +266,24 @@ export class WingetProvider implements PackageProvider {
         resolve(result)
       })
     })
+  }
+}
+
+/**
+ * En Windows, matar `winget` con SIGTERM no garantiza que muera el instalador
+ * hijo que ya pudo haber lanzado. Usamos `taskkill /T /F` para matar todo el árbol.
+ */
+function killChildTree(child: ChildProcess): boolean {
+  if (!child.pid || child.killed) return false
+  try {
+    if (process.platform === 'win32') {
+      spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { windowsHide: true })
+    } else {
+      child.kill('SIGTERM')
+    }
+    return true
+  } catch {
+    return false
   }
 }
 

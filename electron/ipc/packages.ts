@@ -51,6 +51,11 @@ export function registerPackageHandlers() {
       sendProgress(event.sender.id, { id, ...progress })
     })
   })
+
+  ipcMain.handle('packages:cancel', async (_event, id: string) => {
+    const provider = getProvider()
+    return provider.cancel(id)
+  })
 }
 
 function sendProgress(

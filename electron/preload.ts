@@ -22,17 +22,29 @@ const api = {
     isAvailable: (): Promise<{ available: boolean; version?: string; error?: string }> =>
       ipcRenderer.invoke('packages:is-available'),
 
-    download: (id: string): Promise<{ ok: boolean; error?: string; message?: string }> =>
+    download: (
+      id: string,
+    ): Promise<{ ok: boolean; error?: string; message?: string; cancelled?: boolean }> =>
       ipcRenderer.invoke('packages:download', id),
 
-    install: (id: string): Promise<{ ok: boolean; error?: string; message?: string }> =>
+    install: (
+      id: string,
+    ): Promise<{ ok: boolean; error?: string; message?: string; cancelled?: boolean }> =>
       ipcRenderer.invoke('packages:install', id),
 
-    upgrade: (id: string): Promise<{ ok: boolean; error?: string }> =>
+    upgrade: (
+      id: string,
+    ): Promise<{ ok: boolean; error?: string; cancelled?: boolean }> =>
       ipcRenderer.invoke('packages:upgrade', id),
 
-    uninstall: (id: string): Promise<{ ok: boolean; error?: string }> =>
+    uninstall: (
+      id: string,
+    ): Promise<{ ok: boolean; error?: string; cancelled?: boolean }> =>
       ipcRenderer.invoke('packages:uninstall', id),
+
+    /** Cancela cualquier operación de winget en curso para `id`. */
+    cancel: (id: string): Promise<{ cancelled: number }> =>
+      ipcRenderer.invoke('packages:cancel', id),
 
     onProgress: (
       cb: (data: { id: string; phase: string; percent?: number; line?: string }) => void,

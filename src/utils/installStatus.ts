@@ -32,6 +32,8 @@ export function queueStatusLabel(
       return percent > 0 ? `Instalando ${percent}%` : 'Ejecutando instalador…'
     case 'completed':
       return 'Completado'
+    case 'cancelled':
+      return message ?? 'Cancelada'
     case 'error':
       return message ?? 'Error'
     default:

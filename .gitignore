@@ -2,6 +2,11 @@ node_modules
 dist
 dist-electron
 release
+release/
+# Carpetas residuales de empaquetados antiguos (nombres con espacios incluidos)
+PCPI- release-*/
+PCPI-release-*/
+*.tsbuildinfo
 .vite
 
 # Copia generada desde catalog/icons (npm run icons:sync)
