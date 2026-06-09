@@ -30,4 +30,7 @@ export class LinuxStubProvider implements PackageProvider {
   async uninstall(_id: string, _onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return { ok: false, error: 'Linux provider no implementado todavía.' }
   }
+  async cancel(_id: string): Promise<{ cancelled: number }> {
+    return { cancelled: 0 }
+  }
 }

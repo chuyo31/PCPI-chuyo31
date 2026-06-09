@@ -29,4 +29,7 @@ export class MacOSStubProvider implements PackageProvider {
   async uninstall(_id: string, _onProgress?: (e: ProgressEvent) => void): Promise<OpResult> {
     return { ok: false, error: 'macOS provider no implementado todavía.' }
   }
+  async cancel(_id: string): Promise<{ cancelled: number }> {
+    return { cancelled: 0 }
+  }
 }

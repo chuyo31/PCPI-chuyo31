@@ -11,6 +11,7 @@ export type Phase =
   | 'uninstalling'
   | 'upgrading'
   | 'completed'
+  | 'cancelled'
   | 'error'
 
 export interface ProgressEvent {
@@ -36,6 +37,8 @@ export interface OpResult {
   error?: string
   /** Mensaje amigable cuando ok (p. ej. "Ya estaba instalada"). */
   message?: string
+  /** true si la operación se detuvo porque el usuario la canceló. */
+  cancelled?: boolean
 }
 
 export interface PackageProvider {
@@ -53,4 +56,10 @@ export interface PackageProvider {
   install(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
   upgrade(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
   uninstall(id: string, onProgress?: (e: ProgressEvent) => void): Promise<OpResult>
+
+  /**
+   * Cancela cualquier operación (download/install/upgrade/uninstall) en curso
+   * para el `id` indicado. Devuelve cuántos procesos se han matado.
+   */
+  cancel(id: string): Promise<{ cancelled: number }>
 }
