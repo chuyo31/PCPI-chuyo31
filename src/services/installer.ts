@@ -141,21 +141,70 @@ export const useInstaller = create<InstallerState>((set, get) => ({
 
     set({ running: true })
 
+    /**
+     * Winget suele acumular varias actualizaciones de % y soltarlas de golpe en un
+     * único chunk (p. ej. pasar de 14% a 87% sin nada intermedio). Para que la barra
+     * no dé un salto brusco, el % mostrado se anima suavemente hacia el último valor
+     * conocido en vez de aplicarlo de inmediato. El status/mensaje sí se actualiza al
+     * instante: sólo se suaviza el número de %.
+     */
+    const percentAnimations = new Map<string, number>()
+
+    const stopPercentAnimation = (appId: string) => {
+      const raf = percentAnimations.get(appId)
+      if (raf !== undefined) {
+        cancelAnimationFrame(raf)
+        percentAnimations.delete(appId)
+      }
+    }
+
+    const animatePercentTo = (appId: string, target: number) => {
+      stopPercentAnimation(appId)
+      const from = get().queue.find((q) => q.app.id === appId)?.percent ?? 0
+      if (target <= from) return
+
+      const duration = 700
+      const startTime = performance.now()
+
+      const step = (now: number) => {
+        const item = get().queue.find((q) => q.app.id === appId)
+        if (!item || isTerminal(item.status)) {
+          percentAnimations.delete(appId)
+          return
+        }
+        const t = Math.min(1, (now - startTime) / duration)
+        const value = Math.round(from + (target - from) * t)
+        set({
+          queue: get().queue.map((q) =>
+            q.app.id === appId ? { ...q, percent: Math.max(q.percent, value) } : q,
+          ),
+        })
+        if (t < 1) {
+          percentAnimations.set(appId, requestAnimationFrame(step))
+        } else {
+          percentAnimations.delete(appId)
+        }
+      }
+      percentAnimations.set(appId, requestAnimationFrame(step))
+    }
+
     const unsubscribe = window.pcpi.packages.onProgress((p) => {
       const queue = get().queue.map((item) => {
         if (item.app.wingetId !== p.id) return item
         if (isTerminal(item.status)) return item
         const status = phaseToQueueStatus(p.phase, item.status)
-        const percent =
-          p.percent !== undefined ? Math.max(item.percent, p.percent) : item.percent
         return {
           ...item,
           status,
-          percent,
           message: p.line ?? item.message,
         }
       })
       set({ queue })
+
+      if (p.percent === undefined) return
+      const item = queue.find((q) => q.app.wingetId === p.id)
+      if (!item || isTerminal(item.status)) return
+      animatePercentTo(item.app.id, Math.max(item.percent, p.percent))
     })
 
     let dismissTimer: ReturnType<typeof setTimeout> | null = null
@@ -181,6 +230,7 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     const finishIfIdle = async () => {
       if (!isQueueIdle()) return
       if (dismissTimer) clearTimeout(dismissTimer)
+      for (const appId of [...percentAnimations.keys()]) stopPercentAnimation(appId)
       unsubscribe()
       set({ running: false })
       await get().refreshSystemState()
@@ -196,6 +246,7 @@ export const useInstaller = create<InstallerState>((set, get) => ({
         if (!item || isTerminal(item.status)) return
 
         const startedAt = Date.now()
+        stopPercentAnimation(appId)
         markItem(set, get, appId, {
           status: 'installing',
           percent: 0,
@@ -214,6 +265,7 @@ export const useInstaller = create<InstallerState>((set, get) => ({
             : 'Instalación completada'
         const finishedAt = Date.now()
 
+        stopPercentAnimation(appId)
         markItem(set, get, appId, {
           status: result.ok ? 'completed' : 'error',
           percent: result.ok ? 100 : item.percent,
@@ -232,43 +284,50 @@ export const useInstaller = create<InstallerState>((set, get) => ({
     }
 
     try {
-      /** Descargas en paralelo; al terminar cada una entra en la cola de instalación. */
-      await Promise.all(
-        pending.map(async (item) => {
-          const currentBefore = get().queue.find((q) => q.app.id === item.app.id)
-          if (currentBefore && isTerminal(currentBefore.status)) return
+      /**
+       * Descargas en serie (una detrás de otra): Winget usa un índice/caché local
+       * compartido y lanzar varios `winget download` a la vez provoca que unos
+       * queden esperando ese lock indefinidamente (la cola se "atasca"). Al ir una
+       * a una seguimos consiguiendo el pipeline deseado (se descarga la siguiente
+       * mientras se instala la actual, vía `installChain`, que es independiente
+       * de este bucle) sin tener nunca más de un `winget download` corriendo.
+       */
+      for (const item of pending) {
+        const currentBefore = get().queue.find((q) => q.app.id === item.app.id)
+        if (currentBefore && isTerminal(currentBefore.status)) continue
 
-          const startedAt = Date.now()
+        const startedAt = Date.now()
+        stopPercentAnimation(item.app.id)
+        markItem(set, get, item.app.id, {
+          status: 'downloading',
+          percent: 0,
+          message: 'Descargando instalador…',
+          startedAt,
+        })
+
+        const result = await window.pcpi.packages.download(item.app.wingetId)
+        const afterStatus = get().queue.find((q) => q.app.id === item.app.id)?.status
+        if (afterStatus === 'cancelled' || result.cancelled) {
+          // No reencolamos ni marcamos error: el item ya está cancelado.
+          continue
+        }
+
+        if (result.ok) {
+          stopPercentAnimation(item.app.id)
           markItem(set, get, item.app.id, {
-            status: 'downloading',
-            percent: 0,
-            message: 'Descargando instalador…',
-            startedAt,
+            status: 'waiting_install',
+            percent: 100,
+            message: 'En cola para instalar…',
           })
-
-          const result = await window.pcpi.packages.download(item.app.wingetId)
-          const afterStatus = get().queue.find((q) => q.app.id === item.app.id)?.status
-          if (afterStatus === 'cancelled' || result.cancelled) {
-            // No reencolamos ni marcamos error: el item ya está cancelado.
-            return
-          }
-
-          if (result.ok) {
-            markItem(set, get, item.app.id, {
-              status: 'waiting_install',
-              percent: 100,
-              message: 'En cola para instalar…',
-            })
-            enqueueInstall(item.app.id)
-          } else {
-            markItem(set, get, item.app.id, {
-              status: 'error',
-              message: result.error ?? 'Error al descargar',
-              finishedAt: Date.now(),
-            })
-          }
-        }),
-      )
+          enqueueInstall(item.app.id)
+        } else {
+          markItem(set, get, item.app.id, {
+            status: 'error',
+            message: result.error ?? 'Error al descargar',
+            finishedAt: Date.now(),
+          })
+        }
+      }
 
       await installChain
     } finally {

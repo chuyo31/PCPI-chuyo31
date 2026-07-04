@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { LayoutGrid, List, CheckSquare, Square, Download, RefreshCw, CheckCircle2 } from 'lucide-react'
+import { LayoutGrid, List, CheckSquare, Square, Download, RefreshCw, CheckCircle2, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { AppCard } from '@/components/AppCard'
@@ -15,6 +15,12 @@ import { cn } from '@/utils/cn'
 
 type View = 'grid' | 'list'
 type StatusFilter = 'all' | 'installed' | 'upgradable' | 'not_installed'
+type TagFilter = 'opensource' | 'free'
+
+const TAG_FILTER_LABEL: Record<TagFilter, string> = {
+  opensource: 'Open Source',
+  free: 'Gratuitas',
+}
 
 export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
   const [params, setParams] = useSearchParams()
@@ -30,6 +36,7 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
   const q = (params.get('q') ?? '').trim().toLowerCase()
   const category = fixedCategory ?? params.get('category') ?? ''
   const statusFilter = (params.get('status') as StatusFilter) || 'all'
+  const tagFilter = (params.get('tag') as TagFilter | null) ?? null
 
   const counts = useMemo(() => {
     let installed = 0
@@ -49,6 +56,12 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
     return catalog.filter((a) => {
       if (category && a.category !== category) return false
 
+      if (tagFilter === 'opensource' && !a.tags.includes('opensource')) return false
+      // "Gratuitas" en el Home incluye Open Source (todo lo open source es gratis).
+      if (tagFilter === 'free' && !(a.tags.includes('free') || a.tags.includes('opensource'))) {
+        return false
+      }
+
       if (systemScanReady && statusFilter !== 'all') {
         const inst = isAppInstalled(installedById, a)
         const upg = isAppUpgradable(upgradableById, a)
@@ -65,13 +78,25 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
         a.tags.some((t) => t.toLowerCase().includes(q))
       )
     })
-  }, [q, category, catalog, statusFilter, installedById, upgradableById, systemScanReady])
+  }, [q, category, catalog, statusFilter, tagFilter, installedById, upgradableById, systemScanReady])
 
   const setStatusFilter = (status: StatusFilter) => {
     const next = new URLSearchParams(params)
     if (status === 'all') next.delete('status')
     else next.set('status', status)
     setParams(next, { replace: true })
+  }
+
+  const clearTagFilter = () => {
+    const next = new URLSearchParams(params)
+    next.delete('tag')
+    setParams(next, { replace: true })
+  }
+
+  const updateAllUpgradable = () => {
+    if (apps.length === 0) return
+    enqueue(apps.map((a) => a.id))
+    void runQueue()
   }
 
   const toggleSelect = (id: string) => {
@@ -97,13 +122,40 @@ export function CatalogPage({ fixedCategory }: { fixedCategory?: string }) {
     <div className="flex flex-col gap-5">
       <header>
         <h1 className="text-2xl font-bold">
-          {fixedCategory ? categoryName(fixedCategory) : 'Todos los programas'}
+          {fixedCategory
+            ? categoryName(fixedCategory)
+            : tagFilter
+              ? TAG_FILTER_LABEL[tagFilter]
+              : 'Todos los programas'}
         </h1>
         <p className="text-sm text-pcpi-text-muted">
           {apps.length} {apps.length === 1 ? 'aplicación' : 'aplicaciones'}
           {selected.size > 0 && ` · ${selected.size} seleccionadas`}
         </p>
       </header>
+
+      {tagFilter && (
+        <div className="flex flex-wrap items-center gap-2 text-xs text-pcpi-text-muted">
+          <span>Filtro activo:</span>
+          <span className="flex items-center gap-1 rounded-full border border-pcpi-accent bg-pcpi-accent/15 px-3 py-1 font-medium text-pcpi-accent">
+            {TAG_FILTER_LABEL[tagFilter]}
+            <button
+              type="button"
+              onClick={clearTagFilter}
+              aria-label="Quitar filtro"
+              className="rounded-full hover:bg-pcpi-accent/20"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        </div>
+      )}
+
+      {statusFilter === 'upgradable' && apps.length > 0 && (
+        <Button onClick={updateAllUpgradable} className="self-start">
+          <RefreshCw className="h-4 w-4" /> Actualizar todas ({apps.length})
+        </Button>
+      )}
 
       {systemScanReady && (
         <div className="flex flex-wrap gap-2">

@@ -19,6 +19,46 @@ Creado por **Chuyo31** · Powered by AI
 - 📊 Detección automática de apps instaladas y actualizaciones disponibles.
 - 📜 Historial de instalaciones.
 - ⚙️ Arquitectura multiplataforma preparada (Windows hoy, Linux/macOS a futuro).
+- 🖱️ Dashboard interactivo: las tarjetas de estadísticas de la portada son accesos
+  directos al catálogo ya filtrado (ver más abajo).
+
+---
+
+## 🆕 Novedades v0.3.0
+
+**Cola de instalación más fiable**
+
+- Las descargas ya no se lanzan todas en paralelo: se hacen en serie (una detrás de
+  otra), mientras la instalación de la app ya descargada sigue en paralelo a la
+  siguiente descarga. Esto evita que varias instancias de Winget compitan por su
+  índice/caché local y se queden esperando indefinidamente — el síntoma de "se
+  instala una y el resto se quedan colgadas para siempre".
+- Nuevo *watchdog*: si un proceso de Winget deja de responder (sin ninguna salida)
+  durante más de 4 minutos, se cancela automáticamente en vez de bloquear la cola
+  para siempre y obligar a cerrar la aplicación.
+- La barra de progreso de descarga/instalación ahora anima el porcentaje mostrado en
+  vez de aplicarlo de golpe, para suavizar los saltos bruscos (p. ej. 14% → 87%) que
+  provoca el propio buffering de salida de Winget.
+
+**Dashboard interactivo**
+
+- Las tarjetas "Apps disponibles", "Open Source", "Gratuitas", "Instaladas" y "Con
+  actualización" de la portada ahora son clicables: llevan directamente al catálogo
+  con el filtro correspondiente ya aplicado (sin pasos manuales).
+- El catálogo admite filtrar por etiqueta (`?tag=opensource` / `?tag=free`), además
+  del filtro de estado ya existente (`?status=installed|upgradable|not_installed`).
+- El filtro activo se muestra como una etiqueta quitable con un clic, y el título de
+  la página refleja el filtro aplicado.
+- Nuevo botón **"Actualizar todas"** al entrar filtrado por "Con actualización": pone
+  en cola únicamente esas apps con actualización pendiente.
+
+**Catálogo**
+
+- Añadidos 4 editores de vídeo gratuitos verificados en Winget: **OpenShot Video
+  Editor**, **Avidemux**, **Lightworks** y **VSDC Free Video Editor**.
+- *DaVinci Resolve* no se incluye: Blackmagic Design no publica un paquete oficial en
+  el repositorio de Winget, por lo que no se puede instalar de forma fiable siguiendo
+  la filosofía de PCPI (100% vía Winget).
 
 ---
 

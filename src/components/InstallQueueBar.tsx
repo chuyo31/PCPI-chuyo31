@@ -18,7 +18,8 @@ const TERMINAL: QueueStatus[] = ['completed', 'cancelled', 'error']
 
 /**
  * Barra inferior con la cola global de instalación.
- * Descargas en paralelo; instalaciones una tras otra.
+ * Descargas en serie; instalaciones una tras otra (solapadas entre sí:
+ * se descarga la siguiente mientras se instala la actual).
  */
 export function InstallQueueBar() {
   const queue = useInstaller((s) => s.queue)
@@ -69,7 +70,7 @@ export function InstallQueueBar() {
     ? installing
       ? `Instalando ${done + 1} de ${total}`
       : downloading.length > 0
-        ? `Descargando ${downloading.length} en paralelo · ${done} instaladas`
+        ? `Descargando · ${done} instaladas`
         : waiting.length > 0
           ? `${waiting.length} en cola de instalación`
           : `Procesando ${done + 1} de ${total}`

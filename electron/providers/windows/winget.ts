@@ -8,6 +8,12 @@ import type {
 } from '../types'
 
 /**
+ * Tiempo máximo sin recibir ninguna salida de Winget antes de considerarlo colgado
+ * (p. ej. esperando un lock de su índice/caché local) y matarlo automáticamente.
+ */
+const STALL_TIMEOUT_MS = 4 * 60 * 1000
+
+/**
  * Provider de Winget para Windows.
  *
  * Progreso: Winget escribe muchas actualizaciones en la MISMA línea con `\r`
@@ -25,6 +31,8 @@ export class WingetProvider implements PackageProvider {
   private active = new Map<string, Set<ChildProcess>>()
   /** Ids cuya operación se canceló manualmente; el close handler los traduce a cancelled. */
   private cancelled = new Set<string>()
+  /** Ids cuyo proceso se mató por no dar señales de vida (ver STALL_TIMEOUT_MS). */
+  private stalled = new Set<string>()
 
   async cancel(id: string): Promise<{ cancelled: number }> {
     const key = id.toLowerCase()
@@ -195,6 +203,23 @@ export class WingetProvider implements PackageProvider {
       let stdout = ''
       let stderr = ''
       let lastPercent = 0
+      let settled = false
+
+      /**
+       * Red de seguridad: si Winget se queda esperando un lock interno (índice/caché
+       * compartidos) puede no volver a escribir nada nunca y la promesa no se
+       * resolvería jamás, dejando la cola atascada hasta cerrar la app. Si pasan
+       * STALL_TIMEOUT_MS sin ninguna salida, lo tratamos como colgado y lo matamos.
+       */
+      let stallTimer: ReturnType<typeof setTimeout> | null = null
+      const resetStallTimer = () => {
+        if (stallTimer) clearTimeout(stallTimer)
+        stallTimer = setTimeout(() => {
+          if (settled) return
+          this.stalled.add(id.toLowerCase())
+          killChildTree(child)
+        }, STALL_TIMEOUT_MS)
+      }
 
       const emit = (parsed: ParsedWingetLine) => {
         if (parsed.percent !== undefined) {
@@ -212,8 +237,10 @@ export class WingetProvider implements PackageProvider {
         percent: 0,
         line: 'Conectando con Winget…',
       })
+      resetStallTimer()
 
       const handleChunk = (chunk: string) => {
+        resetStallTimer()
         const normalized = chunk.replace(/\r\n/g, '\n')
         const segments = normalized.split(/\r|\n/)
         for (const seg of segments) {
@@ -234,11 +261,18 @@ export class WingetProvider implements PackageProvider {
       })
 
       child.on('error', (err) => {
+        if (settled) return
+        settled = true
+        if (stallTimer) clearTimeout(stallTimer)
         this.unregister(id, child)
         const wasCancelled = this.cancelled.delete(id.toLowerCase())
+        const wasStalled = this.stalled.delete(id.toLowerCase())
         if (wasCancelled) {
           onProgress?.({ phase: 'cancelled', line: 'Operación cancelada por el usuario' })
           resolve({ ok: false, cancelled: true, error: 'Operación cancelada por el usuario' })
+        } else if (wasStalled) {
+          onProgress?.({ phase: 'error', line: 'Winget no respondió: operación cancelada automáticamente' })
+          resolve({ ok: false, error: 'Winget no respondió: operación cancelada automáticamente' })
         } else {
           onProgress?.({ phase: 'error', line: err.message })
           resolve({ ok: false, error: err.message })
@@ -246,11 +280,20 @@ export class WingetProvider implements PackageProvider {
       })
 
       child.on('close', (code) => {
+        if (settled) return
+        settled = true
+        if (stallTimer) clearTimeout(stallTimer)
         this.unregister(id, child)
         const wasCancelled = this.cancelled.delete(id.toLowerCase())
+        const wasStalled = this.stalled.delete(id.toLowerCase())
         if (wasCancelled) {
           onProgress?.({ phase: 'cancelled', line: 'Operación cancelada por el usuario' })
           resolve({ ok: false, cancelled: true, error: 'Operación cancelada por el usuario' })
+          return
+        }
+        if (wasStalled) {
+          onProgress?.({ phase: 'error', line: 'Winget no respondió: operación cancelada automáticamente' })
+          resolve({ ok: false, error: 'Winget no respondió: operación cancelada automáticamente' })
           return
         }
         const result = interpretWingetExit(code, stdout, stderr, mode)

@@ -203,6 +203,62 @@
     "iconUrl": "https://raw.githubusercontent.com/chuyo31/PCPI-chuyo31/main/catalog/icons/losslesscut.png"
   },
   {
+    "id": "openshot",
+    "name": "OpenShot Video Editor",
+    "developer": "OpenShot Studios, LLC",
+    "description": "Editor de vídeo no lineal sencillo y open source, ideal para empezar.",
+    "category": "video",
+    "wingetId": "OpenShot.OpenShot",
+    "license": "GPL",
+    "website": "https://www.openshot.org",
+    "tags": [
+      "opensource",
+      "free",
+      "popular"
+    ]
+  },
+  {
+    "id": "avidemux",
+    "name": "Avidemux",
+    "developer": "Avidemux Team",
+    "description": "Editor de vídeo sencillo para tareas rápidas de corte, filtrado y codificación.",
+    "category": "video",
+    "wingetId": "Avidemux.Avidemux",
+    "license": "GPL",
+    "website": "http://avidemux.sourceforge.net",
+    "tags": [
+      "opensource",
+      "free",
+      "lightweight"
+    ]
+  },
+  {
+    "id": "lightworks",
+    "name": "Lightworks",
+    "developer": "EditShare",
+    "description": "Editor de vídeo profesional (usado en producciones de Hollywood) con versión gratuita.",
+    "category": "video",
+    "wingetId": "LWKS.Lightworks",
+    "license": "Freeware",
+    "website": "https://www.lwks.com",
+    "tags": [
+      "free"
+    ]
+  },
+  {
+    "id": "vsdc",
+    "name": "VSDC Free Video Editor",
+    "developer": "Flash-Integro LLC",
+    "description": "Editor de vídeo no lineal gratuito con efectos, filtros y exportación a múltiples formatos.",
+    "category": "video",
+    "wingetId": "VSDC.Editor",
+    "license": "Freeware",
+    "website": "https://www.videosoftdev.com",
+    "tags": [
+      "free"
+    ]
+  },
+  {
     "id": "gimp",
     "name": "GIMP",
     "developer": "The GIMP Team",

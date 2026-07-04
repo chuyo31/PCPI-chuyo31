@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useInstaller, isAppInstalled, isAppUpgradable } from '@/services/installer'
 import { useCatalog } from '@/services/catalog'
 import { formatDate } from '@/utils/format'
+import { cn } from '@/utils/cn'
 
 export function HomePage() {
   const installedById = useInstaller((s) => s.installedById)
@@ -57,11 +58,21 @@ export function HomePage() {
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <Stat icon={<Package className="h-4 w-4" />} label="Apps disponibles" value={total} />
-        <Stat icon={<Heart className="h-4 w-4" />} label="Open Source" value={openSource} />
-        <Stat icon={<ShieldCheck className="h-4 w-4" />} label="Gratuitas" value={free} />
-        <Stat icon={<Package className="h-4 w-4" />} label="Instaladas (catálogo)" value={installedCount} />
-        <Stat icon={<RotateCw className="h-4 w-4" />} label="Con actualización" value={upgradableCount} />
+        <Stat icon={<Package className="h-4 w-4" />} label="Apps disponibles" value={total} to="/catalog" />
+        <Stat icon={<Heart className="h-4 w-4" />} label="Open Source" value={openSource} to="/catalog?tag=opensource" />
+        <Stat icon={<ShieldCheck className="h-4 w-4" />} label="Gratuitas" value={free} to="/catalog?tag=free" />
+        <Stat
+          icon={<Package className="h-4 w-4" />}
+          label="Instaladas (catálogo)"
+          value={installedCount}
+          to="/catalog?status=installed"
+        />
+        <Stat
+          icon={<RotateCw className="h-4 w-4" />}
+          label="Con actualización"
+          value={upgradableCount}
+          to="/catalog?status=upgradable"
+        />
         <Stat icon={<Sparkles className="h-4 w-4" />} label="Última sync" value={lastSync} small />
       </section>
 
@@ -110,14 +121,18 @@ function Stat({
   label,
   value,
   small,
+  to,
 }: {
   icon: React.ReactNode
   label: string
   value: number | string
   small?: boolean
+  to?: string
 }) {
-  return (
-    <Card>
+  const content = (
+    <Card
+      className={cn(to && 'cursor-pointer hover:border-pcpi-accent/30 hover:shadow-lg hover:shadow-pcpi-accent/10')}
+    >
       <CardContent className="flex flex-col gap-1 p-4">
         <div className="flex items-center gap-2 text-pcpi-text-muted text-xs">
           {icon}
@@ -127,4 +142,6 @@ function Stat({
       </CardContent>
     </Card>
   )
+
+  return to ? <Link to={to}>{content}</Link> : content
 }

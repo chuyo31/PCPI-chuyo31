@@ -1,7 +1,7 @@
 {
   "name": "pcpi",
   "productName": "PCPI",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "PC Post Install - Instala rapidamente software gratuito y de confianza tras formatear Windows.",
   "author": {
     "name": "Chuyo31"
